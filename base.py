@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Base parameters and closely related utility functions.
+"""Base parameters and closely related utility functions."""
 
 # Raw tuple of the price row.
 PRICES_RAW = ( 0,  5,  6,  7,  8,  9, 10, 11,
@@ -17,7 +17,7 @@ TIERS = (
   'green',
   'blue',
   'purple'
-)
+  )
 
 # Corporation names.
 CORPORATIONS = (
@@ -193,7 +193,7 @@ def NumberOfCompanies(number_of_players, tier, game_type):
 
 def MinPrice(id):
   """Returns the minimal price for id."""
-  return (id+1)/2
+  return (id+1)//2
 
 # Each lambda takes two params: f: face value, i: income.
 # Index in tuple == tier.
@@ -220,4 +220,3 @@ def Synergies(id):
     bonus = SYNERGIES[min(company[0], other_company[0])]
     result.setdefault(bonus, set()).add(other_id)
   return result
-    
