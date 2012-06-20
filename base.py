@@ -1,41 +1,40 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+# Base parameters and closely related utility functions.
+
+# Raw tuple of the price row.
 PRICES_RAW = ( 0,  5,  6,  7,  8,  9, 10, 11,
               12, 13, 14, 15, 16, 18, 20, 22,
               24, 26, 28, 31, 34, 37, 41, 45,
               50, 55, 60, 66, 73, 81, 90, 100)
 
-def MakePrices():
-  """Creates a map shareprice -> location.
+# Tier names.
+TIERS = (
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'blue',
+  'purple'
+)
 
-  Location is the integer identifier of the corporation (between 0 and
-  9). -1 means 'unused'. Initially, all locations are -1."""
-  return dict((price, -1) for price in PRICES_RAW)
+# Corporation names.
+CORPORATIONS = (
+  'Android',
+  'Bear',
+  'Eagle',
+  'Horse',
+  'Jupiter',
+  'Orion',
+  'Saturn',
+  'Ship',
+  'Star',
+  'Wheel'
+)
 
-def NumberOfCompanies(number_of_players, tier, game_type):
-  """Returns the number of companies in the game.
-
-  Args:
-    number_of_players: 3 to 5
-    tier: 0 to 5, 0 is red, 5 is purple
-    game_type: one of 'training', 'short', 'full'
-  Returns:
-    -1 for illegal parameters.
-     0 if that tier has no companies in that game.
-    >0 otherwise.
-  """
-  # Sanity check:
-  if not 3 <= number_of_players <= 5: return -1
-  if not 0 <= tier <= 5: return -1
-  if game_type not in ('training', 'short', 'full'): return -1
-  if tier == 5 and game_type in ('training', 'short'): return 0
-  if tier == 4 and game_type == 'training': return 0
-  if tier == 1: return number_of_players*2 - 2
-  return number_of_players + 1
-
-# Map is id -> (tier, income, (list of synergies with lower id's),
-#               abbreviation, name).
+# Companies map, mapping id (== face value) to a tuple
+# (tier, income, (tuple of synergies with lower id's), abbreviation, name).
 COMPANIES = {
   # Red
     1: ( 0,  1, (), 'BME',
@@ -138,28 +137,12 @@ COMPANIES = {
          'Trans-Space Inc.'),
   }
 
+# A map id -> list of synergies with higher id:s.
 COMPANIES_SYNERGIES_UP = dict(
     (id,
-     [other_id for other_id in COMPANIES if id in COMPANIES[other_id][2]])
+     [other_id for other_id, other_company in COMPANIES.items()
+      if id in other_company[2]])
     for id in COMPANIES)
-
-def MinPrice(id):
-  return (id+1)/2
-
-# Each lambda takes two params: f: face value, i: income.
-# Index in tuple == tier.
-MAX_PRICE_LAMBDAS = (
-  lambda f, i: f+i,       # Red
-  lambda f, i: f*1.22+1,  # Orange
-  lambda f, i: f*1.20+2,  # Yellow
-  lambda f, i: f*1.19+7,  # Green
-  lambda f, i: f*1.14+16, # Blue
-  lambda f, i: f*1.10+30, # Purple
-  )
-
-def MaxPrice(id):
-  company = COMPANIES[id]
-  return int(MAX_PRICE_LAMBDAS[company[0]](id, company[1]))
 
 # Map game type -> cost tuple
 # Cost tuple: index is tier of card on top of deck, value is a tuple
@@ -174,7 +157,59 @@ COST = {
                (10, 3), (16, 4))
   }
 
+# Synergy bones for each tier. 
 SYNERGIES = (1, 2, 4, 4, 8, 16)
+
+def MakePrices():
+  """Creates a map shareprice -> location.
+
+  Location is the integer identifier of the corporation (between 0 and
+  9). -1 means 'unused'. Initially, all locations are -1."""
+  return dict((price, -1) for price in PRICES_RAW)
+
+def NumberOfCompanies(number_of_players, tier, game_type):
+  """Returns the number of companies in the game.
+
+  Args:
+    number_of_players: 3 to 6.
+    tier: 0 to 5, 0 is red, 5 is purple.
+    game_type: one of 'training', 'short', 'full'.
+  Returns:
+    -1 for illegal parameters.
+     0 if that tier has no companies in that game.
+    >0 otherwise.
+  """
+  # Sanity check:
+  if not 3 <= number_of_players <= 6: return -1
+  if not 0 <= tier <= 5: return -1
+  if game_type not in ('training', 'short', 'full'): return -1
+  if tier == 5 and game_type in ('training', 'short'): return 0
+  if tier == 4 and game_type == 'training': return 0
+  if number_of_players == 6:
+    # Always all companies of each tier.
+    return sum(1 for c in COMPANIES.values() if c[0] == tier)
+  if tier == 1: return number_of_players*2 - 2
+  return number_of_players + 1
+
+def MinPrice(id):
+  """Returns the minimal price for id."""
+  return (id+1)/2
+
+# Each lambda takes two params: f: face value, i: income.
+# Index in tuple == tier.
+_MAX_PRICE_LAMBDAS = (
+  lambda f, i: f+i,       # Red
+  lambda f, i: f*1.22+1,  # Orange
+  lambda f, i: f*1.20+2,  # Yellow
+  lambda f, i: f*1.19+7,  # Green
+  lambda f, i: f*1.14+16, # Blue
+  lambda f, i: f*1.10+30, # Purple
+  )
+
+def MaxPrice(id):
+  """Returns the maximal price for id."""
+  company = COMPANIES[id]
+  return int(_MAX_PRICE_LAMBDAS[company[0]](id, company[1]))
 
 def Synergies(id):
   """Returns a map synergy bonus -> set of company id's."""
