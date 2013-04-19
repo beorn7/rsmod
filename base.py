@@ -5,7 +5,7 @@
 
 import collections
 
-# Raw tuple of the price row.
+# Raw tuple of the share price row.
 PRICES_RAW = ( 0,  5,  6,  7,  8,  9, 10, 11,
               12, 13, 14, 15, 16, 18, 20, 22,
               24, 26, 28, 31, 34, 37, 41, 45,
@@ -180,7 +180,7 @@ def NumberOfCompanies(number_of_players, tier, game_type):
     tier: 0 to 5, 0 is red, 5 is purple.
     game_type: one of 'training', 'short', 'full'.
   Returns:
-     0 if that tier has no companies in that game.
+    0 if that tier has no companies in that game.
     >0 otherwise.
   Raises:
     ValueError for illegal values.
