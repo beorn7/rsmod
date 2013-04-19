@@ -150,16 +150,17 @@ COMPANIES_SYNERGIES_UP = dict(
     for id in COMPANIES)
 
 # Map game type -> cost tuple
-# Cost tuple: index is tier of card on top of deck, value is a tuple
-# (cost, max affected tier). Second to last value is with no cards
+# Cost tuple: index is tier of card on top of deck, value is a named tuple
+# (cost, max_affected_tier). Second to last value is with no cards
 # left in deck, last value is for last turn.
+Cost = collections.namedtuple('Cost', 'cost max_affected_tier')
 COST = {
-  "training": ((0, -1), (0, -1), (0, -1),  (1, 0), (-1, -1), (-1, -1),
-               ( 3, 1), ( 8, 2)),
-  "short":    ((0, -1), (0, -1), (0, -1),  (1, 0),  (3,  1), (-1, -1),
-               ( 6, 2), (15, 3)),
-  "full":     ((0, -1), (0, -1), (0, -1),  (1, 0),  (3,  1), ( 6,  2),
-               (10, 3), (16, 3))
+  "training": (Cost( 0, -1), Cost( 0, -1), Cost( 0, -1), Cost( 1, 0),
+               Cost(-1, -1), Cost(-1, -1), Cost( 3,  1), Cost( 8, 2)),
+  "short":    (Cost( 0, -1), Cost( 0, -1), Cost( 0, -1), Cost( 1, 0),
+               Cost( 3,  1), Cost(-1, -1), Cost( 6,  2), Cost(15, 3)),
+  "full":     (Cost( 0, -1), Cost( 0, -1), Cost( 0, -1), Cost( 1, 0),
+               Cost( 3,  1), Cost( 6,  2), Cost(10,  3), Cost(16, 3))
   }
 
 # Synergy bonus for each tier. 
@@ -186,9 +187,9 @@ def NumberOfCompanies(number_of_players, tier, game_type):
     ValueError for illegal values.
   """
   # Sanity check:
-  if not 3 <= number_of_players <= 6: raise ValueError
-  if not 0 <= tier <= 5: raise ValueError
-  if game_type not in ('training', 'short', 'full'): raise ValueError
+  if not 3 <= number_of_players <= 6: raise ValueError(number_of_players)
+  if not 0 <= tier <= 5: raise ValueError(tier)
+  if game_type not in COST: raise ValueError(game_type)
   if tier == 5 and game_type in ('training', 'short'): return 0
   if tier == 4 and game_type == 'training': return 0
   if number_of_players == 6:
@@ -248,11 +249,23 @@ def CostOfOwnership(ids, tier_on_top, type_of_game):
   tier_on_top is the tier number of the company card on top of the deck,
   or 6 if the deck is empty or 7 if this is the last turn of the game.
   type_of_game is a string "training", "short" or "full".
+
+  Returns:
+    The total cost of ownership, or -1 if tier_on_top is not present in the
+    selected type_of_game.
+
+  Raises:
+    ValueError: If tier_on_top is negative or type_of_game does not exist.
   """
-  if tier_on_top < 0: raise ValueError
+  if tier_on_top < 0: raise ValueError(tier_on_top)
   if tier_on_top > 7: return -1
-  if 
-  return 0 # TODO
+  if type_of_game not in COST: raise ValueError(type_of_game)
+  cost = COST[type_of_game][tier_on_top]
+  if cost.cost == -1: return -1
+  if cost.max_affected_tier == -1: return 0
+  return sum(cost.cost for id in ids
+             if COMPANIES[id].tier <= cost.max_affected_tier)
+
 
 
      
