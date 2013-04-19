@@ -9,6 +9,14 @@ import base
 
 class TestBase(unittest.TestCase):
 
+    def testGetStartMoney(self):
+        self.assertRaises(ValueError, base.GetStartMoney, 2)
+        self.assertRaises(ValueError, base.GetStartMoney, 7)
+        self.assertEqual(base.GetStartMoney(3), 30)
+        self.assertEqual(base.GetStartMoney(4), 30)
+        self.assertEqual(base.GetStartMoney(5), 30)
+        self.assertEqual(base.GetStartMoney(6), 25)
+
     def testMakePrices(self):
         """Just a smoke test."""
         self.assertEqual(base.MakePrices()[20], -1)

@@ -166,6 +166,16 @@ COST = {
 # Synergy bonus for each tier. 
 SYNERGIES = (1, 2, 4, 4, 8, 16)
 
+def GetStartMoney(number_of_players):
+  """Returns the starting cash in a game with the given number of players.
+
+  Raises:
+    ValueError: If fewer than 3 or more than 6 players
+  """
+  if 3 <= number_of_players <= 5: return 30
+  if number_of_players == 6: return 25
+  raise ValueError(number_of_players)
+
 def MakePrices():
   """Creates a map shareprice -> location.
 
