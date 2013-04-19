@@ -1,7 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""Base parameters and closely related utility functions."""
+"""Base parameters and closely related utility functions.
+
+Everything in this module is supposed to be 'pure', i.e. it does not
+depend on the game state.
+"""
 
 import collections
 
