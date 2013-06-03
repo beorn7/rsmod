@@ -10,10 +10,10 @@ depend on the game state.
 import collections
 
 # Raw tuple of the share price row.
-PRICES_RAW = ( 0,  5,  6,  7,  8,  9, 10, 11,
-              12, 13, 14, 15, 16, 18, 20, 22,
-              24, 26, 28, 31, 34, 37, 41, 45,
-              50, 55, 60, 66, 73, 81, 90, 100)
+PRICES = (  0,  5,  6,  7,  8,  9, 10, 11,
+           12, 13, 14, 15, 16, 18, 20, 22,
+           24, 26, 28, 31, 34, 37, 41, 45,
+           50, 55, 60, 66, 73, 81, 90, 100)
 
 # Tier names.
 TIERS = (
@@ -179,13 +179,6 @@ def GetStartMoney(number_of_players):
   if 3 <= number_of_players <= 5: return 30
   if number_of_players == 6: return 25
   raise ValueError(number_of_players)
-
-def MakePrices():
-  """Creates a map shareprice -> location.
-
-  Location is the integer identifier of the corporation (between 0 and
-  9). -1 means 'unused'. Initially, all locations are -1."""
-  return dict((price, -1) for price in PRICES_RAW)
 
 def NumberOfCompanies(number_of_players, tier, game_type):
   """Returns the number of companies in the game.

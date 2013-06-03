@@ -17,10 +17,6 @@ class TestBase(unittest.TestCase):
         self.assertEqual(base.GetStartMoney(5), 30)
         self.assertEqual(base.GetStartMoney(6), 25)
 
-    def testMakePrices(self):
-        """Just a smoke test."""
-        self.assertEqual(base.MakePrices()[20], -1)
-
     def testNumberOfCompanies(self):
         self.assertRaises(ValueError, base.NumberOfCompanies, 0, 1, 'full')
         self.assertRaises(ValueError, base.NumberOfCompanies, 1, 1, 'full')
