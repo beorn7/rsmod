@@ -15,9 +15,14 @@ GameParams = collections.namedtuple(
     ('name',                  # Name of the game.
      'players',               # Sequence of player names.
      'type',                  # One of 'training', 'short', 'full'.
-     'preselected_companies', # set of company id's that _must_ be in the mix.
+     'preselected_companies', # Set of company id's that _must_ be in the mix.
      'open_companies',        # bool
+     'ascending_companies',   # bool (whether companies in the deck are sorted).
      'share_redemption',      # bool
+     'file_root',             # Directory for game state and HTML files.
+     'css_file',              # As used in HTML. May be relative to file_root.
+     'image_dir',             # As used in HTML. May be relative to file_root.
+     'seed',                  # For random number generator. int or None.
     ))
 
 ForeignInvestor = collections.namedtuple(
@@ -34,7 +39,7 @@ Player = collections.namedtuple(
      'presidencies' # list of bools, if president of the respective company.
      )) 
 
-Corporation = collection.namedtuple(
+Corporation = collections.namedtuple(
     'Corporation',
     ForeignInvestor._fields +
     ('money_in_flight',       # Money that will be received at end of phase 6.

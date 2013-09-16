@@ -178,7 +178,7 @@ def GetStartMoney(number_of_players):
   """
   if 3 <= number_of_players <= 5: return 30
   if number_of_players == 6: return 25
-  raise ValueError(number_of_players)
+  raise ValueError("Invalid number of players: %d" % number_of_players)
 
 def NumberOfCompanies(number_of_players, tier, game_type):
   """Returns the number of companies in the game.
@@ -194,9 +194,11 @@ def NumberOfCompanies(number_of_players, tier, game_type):
     ValueError for illegal values.
   """
   # Sanity check:
-  if not 3 <= number_of_players <= 6: raise ValueError(number_of_players)
-  if not 0 <= tier <= 5: raise ValueError(tier)
-  if game_type not in COST: raise ValueError(game_type)
+  if not 3 <= number_of_players <= 6: raise ValueError(
+    "Invalid number of players: %d" % number_of_players)
+  if not 0 <= tier <= 5: raise ValueError("Invalid tier number: %d" % tier)
+  if game_type not in COST: raise ValueError(
+    "Invalid game type: %s" % game_type)
   if tier == 5 and game_type in ('training', 'short'): return 0
   if tier == 4 and game_type == 'training': return 0
   if number_of_players == 6:
@@ -264,9 +266,11 @@ def CostOfOwnership(ids, tier_on_top, type_of_game):
   Raises:
     ValueError: If tier_on_top is negative or type_of_game does not exist.
   """
-  if tier_on_top < 0: raise ValueError(tier_on_top)
+  if tier_on_top < 0: raise ValueError(
+    "Tier on top is negative: %d" % tier_on_top)
   if tier_on_top > 7: return -1
-  if type_of_game not in COST: raise ValueError(type_of_game)
+  if type_of_game not in COST: raise ValueError(
+    "Invalid type of game: %s" % type_of_game)
   cost = COST[type_of_game][tier_on_top]
   if cost.cost == -1: return -1
   if cost.max_affected_tier == -1: return 0
