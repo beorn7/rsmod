@@ -50,7 +50,7 @@ Corporation = collections.namedtuple(
      'shares',                # Number of shares issued.
      ))
 
-# A game is tracked in a serious of Phase objects. Each
+# A game is tracked in a series of Phase objects. Each
 # translates into a separate page in the HTML interface.
 Phase = collections.namedtuple(
     'Phase',
