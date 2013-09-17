@@ -276,7 +276,3 @@ def CostOfOwnership(ids, tier_on_top, type_of_game):
   if cost.max_affected_tier == -1: return 0
   return sum(cost.cost for id in ids
              if COMPANIES[id].tier <= cost.max_affected_tier)
-
-
-
-     

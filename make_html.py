@@ -77,7 +77,8 @@ def _Header(phase):
         '<link rel="icon" type="image/png" href="%s/rabe.png">' %
         html.escape(phase.params.image_dir),
         '</head>',
-        '<body>']
+        '<body>',
+        ]
     # TODO
     return "\n".join(lines)
 
