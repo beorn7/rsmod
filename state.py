@@ -8,6 +8,7 @@ classes into and from a human-readable and -editable format.
 """
 
 import collections
+import os
 
 # Things that are set at game start and never change.
 GameParams = collections.namedtuple(
@@ -73,3 +74,36 @@ Phase = collections.namedtuple(
                      # replayed. The phase tuple will then contain the state at
                      # the beginning of a phase.
     ))
+
+def SavePhase(phase, overwrite_existing=False):
+    """Saves the Phase tuple to a file.
+
+    The file is created in file_root with the pattern t<x>p<y>.py for its name,
+    where x is the turn number and p the phase number.
+
+    Existing files will only be overwritten if overwrite_existing is set to
+    True. (Otherwise, OSError is raised.)
+
+    Raises:
+      OSError: If any file operation fails.
+    """
+    filename = os.path.join(phase.params.file_root,
+                            't%dp%d.py' % (phase.turn, phase.phase))
+    mode = 'w' if overwrite_existing else 'x'
+    with open(filename, mode) as fd:
+        fd.write(str(phase))
+        fd.write('\n')
+
+def RestorePhase(filename):
+    """Restores a Phase tuple from the named file.
+
+    Returns:
+      The restored Phase tuple.
+    Raises:
+      OSError: If any file operation fails.
+    """
+    with open(filename, 'r') as fd:
+        code = fd.read()
+    phase = eval(code)
+    return phase
+    
