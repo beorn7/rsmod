@@ -167,6 +167,12 @@ COST = {
                Cost( 3,  1), Cost( 6,  2), Cost(10,  3), Cost(16, 3))
   }
 
+MAX_TIER = {
+  "training": 3,
+  "short": 4,
+  "full": 5
+}
+
 # Synergy bonus for each tier. 
 SYNERGIES = (1, 2, 4, 4, 8, 16)
 
@@ -197,10 +203,7 @@ def NumberOfCompanies(number_of_players, tier, game_type):
   if not 3 <= number_of_players <= 6: raise ValueError(
     "Invalid number of players: %d" % number_of_players)
   if not 0 <= tier <= 5: raise ValueError("Invalid tier number: %d" % tier)
-  if game_type not in COST: raise ValueError(
-    "Invalid game type: %s" % game_type)
-  if tier == 5 and game_type in ('training', 'short'): return 0
-  if tier == 4 and game_type == 'training': return 0
+  if tier > MAX_TIER[game_type]: return 0
   if number_of_players == 6:
     # Always all companies of each tier.
     return sum(1 for c in COMPANIES.values() if c.tier == tier)

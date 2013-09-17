@@ -15,7 +15,7 @@ def CostOfOwnership(ids, phase):
     if phase.turn == phase.last_turn:
         tier_on_top = 7
     elif len(phase.deck):
-        tier_on_top = base.COMPANIES[deck[0]].tier
+        tier_on_top = base.COMPANIES[phase.deck[0]].tier
     else:  # Empty deck, but not last turn yet.
         tier_on_top = 6
     result = base.CostOfOwnership(ids, tier_on_top, phase.params.type)
@@ -60,5 +60,5 @@ def TotalIncomeForeignInvestor(phase):
     Returns:
       The total income.
     """
-    ids = foreign_investor.companies
+    ids = phase.foreign_investor.companies
     return base.BaseIncome(ids) - CostOfOwnership(ids, phase) + 5

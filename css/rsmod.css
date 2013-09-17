@@ -106,46 +106,46 @@ td.noborder {
   text-align: right;
 }
 
-.red {
+.red, .orange, .yellow, .green, .blue, .purple,
+.red-hover, .orange-hover, .yellow-hover, .green-hover,
+.blue-hover, .purple-hover {
   padding: 1px;
   border: 1px solid black;
+  white-space: nowrap;
+}
+
+.red-hover, .orange-hover, .yellow-hover, .green-hover,
+.blue-hover, .purple-hover {
+  position: relative;
+}
+
+.red-hover:hover, .orange-hover:hover, .yellow-hover:hover,
+.green-hover:hover, .blue-hover:hover, .purple-hover:hover {
+  box-shadow: 0px 0px 12px 4px #9E9E9E
+}
+
+.red, .red-hover {
   background-color: #FF6067;
-  white-space: nowrap;
 }
 
-.orange {
-  padding: 1px;
-  border: 1px solid black;
+.orange, .orange-hover {
   background-color: #FFBB66;
-  white-space: nowrap;
 }
 
-.yellow {
-  padding: 1px;
-  border: 1px solid black;
+.yellow, .yellow-hover {
   background-color: #FFFF55;
-  white-space: nowrap;
 }
 
-.green {
-  padding: 1px;
-  border: 1px solid black;
+.green, .green-hover {
   background-color: #00FF22;
-  white-space: nowrap;
 }
 
-.blue {
-  padding: 1px;
-  border: 1px solid black;
+.blue, .blue-hover {
   background-color: #7799FF;
-  white-space: nowrap;
 }
 
-.purple {
-  padding: 1px;
-  border: 1px solid black;
+.purple, .purple-hover {
   background-color: #C505FF;
-  white-space: nowrap;
 }
 
 .loss {
@@ -175,22 +175,23 @@ div.clear-both {
 div.tooltip {
   display: none;
   position: absolute;
-  top: 30px;
+  top: 1.3em;
   left: -80px;
-  right: -80px;
-  background-color:#FFF2E9;
+  background-color: #DEDEDE;
   border-radius: 5px;
   border: 1px solid gray;
   padding:.1em;
   margin: 0;
   box-shadow: 6px 6px 12px #222;
+  white-space: normal;
 }
 
 .tooltip-parent {
   position: relative;
 }
 
-.tooltip-parent:hover > div.tooltip {
+.tooltip-parent:hover > div.tooltip,
+span:hover > div.tooltip {
   display: block;
 }
 

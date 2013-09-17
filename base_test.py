@@ -22,7 +22,7 @@ class TestBase(unittest.TestCase):
         self.assertRaises(ValueError, base.NumberOfCompanies, 1, 1, 'full')
         self.assertRaises(ValueError, base.NumberOfCompanies, 2, 1, 'full')
         self.assertRaises(ValueError, base.NumberOfCompanies, 3, 6, 'full')
-        self.assertRaises(ValueError, base.NumberOfCompanies, 3, 5, 'illegal')
+        self.assertRaises(KeyError, base.NumberOfCompanies, 3, 5, 'illegal')
         self.assertEqual(base.NumberOfCompanies( 4, 4, 'training'), 0)
         self.assertEqual(base.NumberOfCompanies( 4, 5, 'training'), 0)
         self.assertEqual(base.NumberOfCompanies( 4, 5, 'short'), 0)

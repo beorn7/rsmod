@@ -1,14 +1,35 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""Creation of static HTML based on a Phase tuple."""
+"""Creation of static HTML based on a Phase tuple.
+
+TODO: i18n has to happen here.
+"""
 
 import html
 import os
 
+import base
 import util
 
-PHASE_NAMES = {  # TODO: i18n.
+COMPANY_CLASS = {
+    0: 'red',
+    1: 'orange',
+    2: 'yellow',
+    3: 'green',
+    4: 'blue',
+    5: 'purple'
+}
+
+SYNERGY_CLASS = {
+    1: 'red',
+    2: 'orange',
+    4: 'yellow',
+    8: 'blue',
+   16: 'purple'
+}
+
+PHASE_NAMES = {
     1: 'issue shares',
     2: 'form corporations',
     3: 'share trading and auctions',
@@ -92,7 +113,7 @@ def _Header(phase):
         '<dt>Type</dt><dd>%s</dd>' % phase.params.type,
         '<dt>Open company deck</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.open_companies),
-        '<dt>Companies in ascending order</dt><dd>%s</dd>' %
+        '<dt>Companies&nbsp;in&nbsp;ascending&nbsp;order</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.ascending_companies),
         '<dt>Share redemption allowed</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.share_redemption),
@@ -159,7 +180,10 @@ def _ForeignInvestor(phase):
   <li>Income: %s</li>
   <li>Companies: %s</li>
 </ul>
-""" % (fi.money, util.TotalIncomeForeignInvestor(phase), "TODO"))
+""" % (fi.money,
+       _FormatDelta(util.TotalIncomeForeignInvestor(phase)),
+       _FormatCompanies(phase.foreign_investor.companies,
+                        max_tier=base.MAX_TIER[phase.params.type])))
 
 def _Footer():
     return "</body>\n</html>\n"
@@ -167,3 +191,62 @@ def _Footer():
 
 def _FormatBoolean(b):
     return 'yes' if b else 'no'
+
+
+def _FormatDelta(delta):
+  if delta >= 0:
+    return '+$%d' % delta
+  return '<span class="loss">-$%d</span>' % -delta
+
+
+def _FormatCompany(company, active=False):
+  return '<span class="%s" title="%s" %s>%s[%d]</span>' % (
+      COMPANY_CLASS[base.COMPANIES[company].tier],
+      base.COMPANIES[company].name,
+      'style="border: 3px solid black"' if active else '',
+      base.COMPANIES[company].abbreviation, company)
+
+
+def _FormatCompanyHover(company, corporation=None, max_tier=5):
+  return '<span class="%s">%s[%d]<div class="tooltip">%s</div></span>' % (
+      COMPANY_CLASS[base.COMPANIES[company].tier] + "-hover",
+      base.COMPANIES[company].abbreviation, company,
+      _FormatCompanyDetail(company, corporation, max_tier))
+
+
+def _FormatCompanyDetail(company, corporation=None, max_tier=5):
+    return ('<h4>%s</h4>'
+            '<span class="%s" title="%s">%s[%d] ($%d&ndash;$%d) %s</span>'
+            '<br>%s' % (
+            base.COMPANIES[company].name,
+            COMPANY_CLASS[base.COMPANIES[company][0]],
+            base.COMPANIES[company].name,
+            base.COMPANIES[company].abbreviation, company,
+            base.MinPrice(company), base.MaxPrice(company),
+            _FormatDelta(base.COMPANIES[company].income),
+            _FormatSynergies(company, corporation, max_tier)))
+
+
+def _FormatCompanies(companies, corporation=None, max_tier=5):
+    return (' '.join(_FormatCompanyHover(company, corporation, max_tier)
+                     for company in sorted(companies))
+            if companies else '&ndash;')
+
+
+def _FormatSynergies(company, corporation=None, max_tier=5):
+    parts = []
+    for bonus, companies in sorted(base.Synergies(company).items()):
+        inner_parts = []
+        for i in sorted(companies):
+            if base.COMPANIES[i].tier > max_tier:
+                continue
+            inner_parts.append(_FormatCompany(
+                    i, corporation is not None and i in corporation.companies))
+        if inner_parts:
+            parts.append('<li><span class="%s">%s:</span>'
+                         '&nbsp;%s</li>' %
+                         (SYNERGY_CLASS[bonus],
+                          _FormatDelta(bonus),
+                          '&nbsp;'.join(inner_parts)))
+    return '<ul class="synergies">%s</ul>' % '\n'.join(parts)
+
