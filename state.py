@@ -36,7 +36,7 @@ Player = collections.namedtuple(
     ForeignInvestor._fields +
     ('order',       # Player order, as int, 1-based.
      'shares',      # list of ints, number of shares for each company.
-     'presidencies' # list of bools, if president of the respective company.
+     'presidencies' # list of bools, whether president of the respective company.
      )) 
 
 Corporation = collections.namedtuple(
