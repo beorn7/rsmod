@@ -1,0 +1,155 @@
+body {
+  font-family:Helvetica,sans-serif;
+}
+
+p {
+  margin:.2em;
+}
+
+h1 {
+  font-size:2.0em;
+  text-align:center;
+  background-color:#F8F8B8;
+  border-top:2px solid gray;
+  border-right:2px solid gray;
+  border-left:2px solid gray;
+  bordor-bottom: hidden;
+  padding:.5em;
+  margin: 0;
+  -webkit-box-shadow: 1px 1px 8px #000;
+  -moz-box-shadow: 1px 1px 8px #000;
+}
+
+h2 {
+  font-size:1.5em;
+  clear: both;
+  border-top: 2px solid gray;
+  margin: 0;
+  padding: 0.5em;
+  text-align:center;
+}
+
+h3 {
+  font-size:1.1em;
+  clear: both;
+  border-top: 1px dotted gray;
+  margin: 0;
+  padding: 0.2em;
+}
+
+a.nav {
+  background-color:#F8F8B8;
+  border:1px solid gray;
+  -webkit-box-shadow: 1px 1px 8px #000;
+  -moz-box-shadow: 1px 1px 8px #000;
+  margin: 0.2em;
+  padding: 0.1em;
+  color: purple;
+  text-decoration: none;
+}
+
+table {
+  border:1px solid gray;
+  border-spacing:0.1em;
+  border-collapse:collapse;
+  -webkit-box-shadow: 1px 1px 8px #000;
+  -moz-box-shadow: 1px 1px 8px #000;
+  margin: 0.5em;
+  empty-cells: hide;
+}
+
+
+td {
+  padding: 0.25em;
+  border-top: 1px dotted gray;
+  border-bottom: 1px dotted gray;
+  border-right: 1px solid gray;
+  border-left: 1px solid gray;
+  line-height: 150%;
+}
+
+th {
+  padding: 0.25em;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  border-right: 1px solid gray;
+  border-left: 1px solid gray;
+  vertical-align: bottom;
+}  
+
+ul {
+  margin: 0.2em;
+  line-height: 150%;
+}
+
+td.noborder {
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  border-left: none;
+}
+
+.solidborder {
+  border: 1px solid gray;
+  text-align: right;
+}
+
+.sharepricerow {
+  width: 20px
+}
+
+.num {
+  text-align: right;
+}
+
+.red {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #FF6067;
+  white-space: nowrap;
+}
+
+.orange {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #FFBB66;
+  white-space: nowrap;
+}
+
+.yellow {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #FFFF55;
+  white-space: nowrap;
+}
+
+.green {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #00FF22;
+  white-space: nowrap;
+}
+
+.blue {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #7799FF;
+  white-space: nowrap;
+}
+
+.purple {
+  padding: 1px;
+  border: 1px solid black;
+  background-color: #C505FF;
+  white-space: nowrap;
+}
+
+.loss {
+  color: red;
+}
+
+.synergies {
+  font-size: x-small;
+  line-height: 200%;
+  list-style-type: none;
+}
