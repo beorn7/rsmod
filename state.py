@@ -67,12 +67,14 @@ Phase = collections.namedtuple(
      'foreign_investor', # A ForeignInvestor tuple.
      'players',      # A list of Player tuples.
      'corporations', # A list of Corporation tuples.
-     'actions',      # For now just a list of strings describing the actions
+     'actions',      # For now just a list of HTML strings describing the actions
                      # performed in this phase. (This phase tuple contains the
                      # state after these actions have been applied.) Later,
                      # this list will contain action objects that can be
                      # replayed. The phase tuple will then contain the state at
                      # the beginning of a phase.
+     'future_actions', # In phases with predictable order, this may be filled
+                     # with HTML hints for the players (so that they see who is up).
     ))
 
 def SavePhase(phase, overwrite_existing=False):

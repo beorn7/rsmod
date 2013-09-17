@@ -28,7 +28,8 @@ def MakePhase(params):
       foreign_investor=state.ForeignInvestor(money=4, companies=set()),
       players=[],  # Will be populated below.
       corporations=[],  # Will be populated below.
-      actions=[])
+      actions=[],
+      future_actions=[])
 
   random.seed(params.seed)
   number_of_players = len(params.players)

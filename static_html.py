@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""HTML creation based on a Phase tuple."""
+"""Creation of static HTML based on a Phase tuple."""
 
 import html
 import os
+
+import util
 
 PHASE_NAMES = {  # TODO: i18n.
     1: 'issue shares',
@@ -63,48 +65,89 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
 
 
 def _Header(phase):
-    title = 'Game: %s &ndash; Turn: %d &ndash; Phase: %d (%s)' % (
-        html.escape(phase.params.name),
-        phase.turn, phase.phase, PHASE_NAMES[phase.phase])
+    name = 'Game: %s' %  html.escape(phase.params.name)
+    t = phase.turn
+    p = phase.phase
+    turn_and_phase = 'Turn: %d &ndash; Phase: %d (%s)' % (
+        t, p, PHASE_NAMES[p])
     lines = [
         '<!DOCTYPE html>',
         '<html lang="en">',
         '<head>',
         '<meta http-equiv="content-type" content="text/html; charset=utf-8">',
-        '<title>Rolling Stock &ndash; %s</title>' % title,
+        '<title>Rolling Stock &ndash; %s &ndash; %s</title>' %
+        (name, turn_and_phase),
         '<link rel="stylesheet" type="text/css" href="%s">' %
         html.escape(phase.params.css_file),
         '<link rel="icon" type="image/png" href="%s/rabe.png">' %
         html.escape(phase.params.image_dir),
         '</head>',
         '<body>',
+        '<h1>Rolling Stock &ndash; %s ' % name,
+        '<span class="tooltip-parent">',
+        '<img src="%s/info.png" alt="info">' %
+        html.escape(phase.params.image_dir),
+        '<div class="tooltip"><h4>Game variants used</h4>',
+        '<dl>',
+        '<dt>Type</dt><dd>%s</dd>' % phase.params.type,
+        '<dt>Open company deck</dt><dd>%s</dd>' %
+        _FormatBoolean(phase.params.open_companies),
+        '<dt>Companies in ascending order</dt><dd>%s</dd>' %
+        _FormatBoolean(phase.params.ascending_companies),
+        '<dt>Share redemption allowed</dt><dd>%s</dd>' %
+        _FormatBoolean(phase.params.share_redemption),
+        '</dl>',
+        '</div></span>',
+        '</h1>',
+        '<h2>%s</h2>' % turn_and_phase,
+        '<div class="left">',
+        '  <a class="nav" href="t1p1.html">&#8676;start</a>',
+        '  <a class="nav" href="t%dp%d.html">&#8606;previous turn</a>' %
+        (t-1 if t > 1 else 1, p),
+        '  <a class="nav" href="t%dp%d.html">&#8592;previous phase</a>' %
+        (t if p > 1 else (t-1 if t > 1 else 1),
+         p-1 if p > 1 else (9 if t > 1 else 1)),
+        '</div>',
+        '<div class="right">',
+        '  <a class="nav" href="t%dp%d.html">next phase&#8594;</a>' %
+        (t if p < 9 else t+1, p+1 if p < 9 else 1),
+        '  <a class="nav" href="t%dp%d.html">next turn&#8608;</a>' %
+        (t+1, p),
+        '  <a class="nav" href="index.html">latest move&#8677;</a>',
+        '</div>',
+        '<div class="clear-both">',
         ]
-    # TODO
-    return "\n".join(lines)
+    for line in phase.actions + phase.future_actions:
+        lines.append('<p>%s</p>' % line)
+    lines.append('</div>')
+    return "\n".join(lines + [''])
 
 
 def _Actions(phase):
     lines = []
     
-    return "\n".join(lines)
+    return "\n".join(lines + [''])
 
 
 def _Overview(phase):
-    lines = []
+    lines = [
+        '<h3>Overview</h3>',
+        '<p>(players in player order)</p>',
+        ]
     
-    return "\n".join(lines)
+    return "\n".join(lines + [''])
 
 
 def _SharePriceRow(phase):
     lines = []
     
-    return "\n".join(lines)
+    return "\n".join(lines + [''])
 
 
 def _Deck(phase):
     lines = []
-    
-    return "\n".join(lines)
+    # TODO (include preselected companies)
+    return "\n".join(lines + [''])
 
 
 def _ForeignInvestor(phase):
@@ -116,8 +159,11 @@ def _ForeignInvestor(phase):
   <li>Income: %s</li>
   <li>Companies: %s</li>
 </ul>
-""" % (fi.money, "TODO", "TODO"))
+""" % (fi.money, util.TotalIncomeForeignInvestor(phase), "TODO"))
 
 def _Footer():
     return "</body>\n</html>\n"
 
+
+def _FormatBoolean(b):
+    return 'yes' if b else 'no'
