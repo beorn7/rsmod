@@ -6,7 +6,7 @@
 import html
 import os
 
-def WriteHtml(phase, create_index_link=True):
+def Write(phase, create_index_link=True):
     """Writes the game state as HTML.
 
     The file name is derived from phase.params:
