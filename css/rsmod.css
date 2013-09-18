@@ -6,13 +6,14 @@ p {
   margin:.2em;
 }
 
-h1 {
-  font-size:2.0em;
+div.h1 {
+  font-size:1.8em;
+  font-weight: bold;
   text-align:center;
   background-color:#F8F8B8;
   border: 2px solid gray;
   border-radius: 10px;
-  padding:.5em;
+  padding:.2em;
   margin: 0;
   box-shadow: 3px 3px 6px #222;
 }
@@ -108,7 +109,8 @@ td.noborder {
 
 .red, .orange, .yellow, .green, .blue, .purple,
 .red-hover, .orange-hover, .yellow-hover, .green-hover,
-.blue-hover, .purple-hover {
+.blue-hover, .purple-hover, .card {
+  display: inline;
   padding: 1px;
   border: 1px solid black;
   white-space: nowrap;
@@ -117,11 +119,16 @@ td.noborder {
 .red-hover, .orange-hover, .yellow-hover, .green-hover,
 .blue-hover, .purple-hover {
   position: relative;
+  cursor: help;
 }
 
 .red-hover:hover, .orange-hover:hover, .yellow-hover:hover,
 .green-hover:hover, .blue-hover:hover, .purple-hover:hover {
   box-shadow: 0px 0px 12px 4px #9E9E9E
+}
+
+.card {
+  background-color: #DEDEDE
 }
 
 .red, .red-hover {
@@ -184,14 +191,17 @@ div.tooltip {
   margin: 0;
   box-shadow: 6px 6px 12px #222;
   white-space: normal;
+  z-index: 100;
 }
 
 .tooltip-parent {
+  display: inline;
   position: relative;
+  cursor: help;
 }
 
 .tooltip-parent:hover > div.tooltip,
-span:hover > div.tooltip {
+div:hover > div.tooltip {
   display: block;
 }
 
@@ -203,9 +213,12 @@ dl {
 
 dt {
   font-weight: bold;
+  white-space: nowrap;
 }
 
 dd {
+  line-height: 1.8;
+  margin-left: 15px;
 }
 
 dt:after {

@@ -10,15 +10,27 @@ They are still pure, i.e. not object-oriented.
 import base
 
 
+# TODO: test these functions!
+
+def TierOnTop(phase):
+    """Returns the tier of the card on top of the deck.
+
+    Returns:
+      The tier number {0..5} of the card on top of the deck.
+      If this is the last turn of the game, 7 is returned.
+      If the deck is empty, 6 is returned.
+    """
+    if phase.turn == phase.last_turn:
+        return 7
+    elif len(phase.deck):
+        return base.COMPANIES[phase.deck[0]].tier
+    else:  # Empty deck, but not last turn yet.
+        return 6
+    
+
 def CostOfOwnership(ids, phase):
     """Calculates cost of ownership for a set of company IDs."""
-    if phase.turn == phase.last_turn:
-        tier_on_top = 7
-    elif len(phase.deck):
-        tier_on_top = base.COMPANIES[phase.deck[0]].tier
-    else:  # Empty deck, but not last turn yet.
-        tier_on_top = 6
-    result = base.CostOfOwnership(ids, tier_on_top, phase.params.type)
+    result = base.CostOfOwnership(ids, TierOnTop(phase), phase.params.type)
     assert(result >= 0)
     return result
 

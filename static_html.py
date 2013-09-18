@@ -3,7 +3,9 @@
 
 """Creation of static HTML based on a Phase tuple.
 
-TODO: i18n has to happen here.
+This is pretty messy ad-hoc HTML generation. It should use some form of
+template framework... But since all the HTML is supposed to be generated
+dynamically for the real online play, this will go away at some point anyway.
 """
 
 import html
@@ -76,6 +78,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         fd.write(_SharePriceRow(phase))
         fd.write(_Deck(phase))
         fd.write(_ForeignInvestor(phase))
+        fd.write(_CorporationDetails(phase))
         fd.write(_Footer())
     os.chmod(filename, 0o644)
     index_filename = os.path.join(phase.params.file_root, 'index.html')
@@ -104,8 +107,8 @@ def _Header(phase):
         html.escape(phase.params.image_dir),
         '</head>',
         '<body>',
-        '<h1>Rolling Stock &ndash; %s ' % name,
-        '<span class="tooltip-parent">',
+        '<div class="h1">Rolling Stock &ndash; %s ' % name,
+        '<div class="tooltip-parent">',
         '<img src="%s/info.png" alt="info">' %
         html.escape(phase.params.image_dir),
         '<div class="tooltip"><h4>Game variants used</h4>',
@@ -113,13 +116,15 @@ def _Header(phase):
         '<dt>Type</dt><dd>%s</dd>' % phase.params.type,
         '<dt>Open company deck</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.open_companies),
-        '<dt>Companies&nbsp;in&nbsp;ascending&nbsp;order</dt><dd>%s</dd>' %
+        '<dt>Companies in ascending order</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.ascending_companies),
         '<dt>Share redemption allowed</dt><dd>%s</dd>' %
         _FormatBoolean(phase.params.share_redemption),
+        '<dt>Preselected companies</dt><dd>%s</dd>' %
+        _FormatCompanies(phase.params.preselected_companies)
+        if phase.params.preselected_companies else "none",
         '</dl>',
-        '</div></span>',
-        '</h1>',
+        '</div></div></div>',
         '<h2>%s</h2>' % turn_and_phase,
         '<div class="left">',
         '  <a class="nav" href="t1p1.html">&#8676;start</a>',
@@ -136,38 +141,72 @@ def _Header(phase):
         (t+1, p),
         '  <a class="nav" href="index.html">latest move&#8677;</a>',
         '</div>',
-        '<div class="clear-both">',
         ]
+    return "\n".join(lines + [''])
+
+
+def _Actions(phase):
+    lines = ['<div class="clear-both">',]
     for line in phase.actions + phase.future_actions:
         lines.append('<p>%s</p>' % line)
     lines.append('</div>')
     return "\n".join(lines + [''])
 
 
-def _Actions(phase):
-    lines = []
-    
-    return "\n".join(lines + [''])
-
-
 def _Overview(phase):
     lines = [
         '<h3>Overview</h3>',
-        '<p>(players in player order)</p>',
+        '<p>(players in player order, corporations in share price order)</p>',
         ]
-    
+    # TODO (link to anchor for corps)
     return "\n".join(lines + [''])
 
 
 def _SharePriceRow(phase):
-    lines = []
-    
+    lines = [
+        '<h3>Share price row</h3>',
+        ]
+    # TODO (link to anchor for corps)
     return "\n".join(lines + [''])
 
 
 def _Deck(phase):
-    lines = []
-    # TODO (include preselected companies)
+    params = phase.params
+    deck = phase.deck
+    lines = [
+        '<h3>Company deck</h3>',
+        '<ul>',
+        '<li>Available for auctions: %s</li>' %
+        _FormatCompanies(phase.available),
+        '<li>Drawn but not available for auction: %s</li>' %
+        _FormatCompanies(phase.unavailable),
+        '<li>In the deck: ',
+        ]
+    if params.open_companies:
+        lines.append(_FormatCompanies(deck))
+    else:
+        lines.extend('<span class="%s">&nbsp;</span>' %
+                     COMPANY_CLASS[base.COMPANIES[id].tier]
+                     for id in deck)
+    lines.append(' <span class="card">%s game end card</span></li>' %
+                 ('flipped' if phase.last_turn == phase.turn else ''))
+    if not params.open_companies:
+        preselected_still_in_deck = params.preselected_companies & set(deck)
+        if preselected_still_in_deck:
+            lines.append('<li>Preselected companies in deck: %s</li>'%
+                         _FormatCompanies(preselected_still_in_deck))
+    lines.append('<li>Cost of ownership:')
+    cost = base.COST[params.type][util.TierOnTop(phase)]
+    for tier in range(cost.max_affected_tier+1):
+        lines.append(' <span class="%s">-$%d</span>' %
+                     (COMPANY_CLASS[tier], cost.cost))
+    if not cost.cost:
+        lines.append(' none')
+    lines += [
+        '</li>',
+        '<li>Closed companies:  %s </li>' % _FormatCompanies(phase.closed),
+        '</ul>',
+        ]
     return "\n".join(lines + [''])
 
 
@@ -185,6 +224,18 @@ def _ForeignInvestor(phase):
        _FormatCompanies(phase.foreign_investor.companies,
                         max_tier=base.MAX_TIER[phase.params.type])))
 
+
+def _CorporationDetails(phase):
+    corps = phase.corporations
+    if not any(corp.shares for corp in corps):
+        return ""
+    lines = [
+        '<h3>Corporation details (in share price order)</h3>',
+        ]
+    # TODO (add anchors to jump to corp, only put open corps here)
+    return "\n".join(lines + [''])
+
+
 def _Footer():
     return "</body>\n</html>\n"
 
@@ -200,7 +251,7 @@ def _FormatDelta(delta):
 
 
 def _FormatCompany(company, active=False):
-  return '<span class="%s" title="%s" %s>%s[%d]</span>' % (
+  return '<div class="%s" title="%s" %s>%s[%d]</div>' % (
       COMPANY_CLASS[base.COMPANIES[company].tier],
       base.COMPANIES[company].name,
       'style="border: 3px solid black"' if active else '',
@@ -208,7 +259,7 @@ def _FormatCompany(company, active=False):
 
 
 def _FormatCompanyHover(company, corporation=None, max_tier=5):
-  return '<span class="%s">%s[%d]<div class="tooltip">%s</div></span>' % (
+  return '<div class="%s">%s[%d]<div class="tooltip">%s</div></div>' % (
       COMPANY_CLASS[base.COMPANIES[company].tier] + "-hover",
       base.COMPANIES[company].abbreviation, company,
       _FormatCompanyDetail(company, corporation, max_tier))
@@ -216,7 +267,7 @@ def _FormatCompanyHover(company, corporation=None, max_tier=5):
 
 def _FormatCompanyDetail(company, corporation=None, max_tier=5):
     return ('<h4>%s</h4>'
-            '<span class="%s" title="%s">%s[%d] ($%d&ndash;$%d) %s</span>'
+            '<div class="%s" title="%s">%s[%d] ($%d&ndash;$%d) %s</div>'
             '<br>%s' % (
             base.COMPANIES[company].name,
             COMPANY_CLASS[base.COMPANIES[company][0]],
@@ -228,8 +279,10 @@ def _FormatCompanyDetail(company, corporation=None, max_tier=5):
 
 
 def _FormatCompanies(companies, corporation=None, max_tier=5):
+    if isinstance(companies, set):
+        companies = sorted(companies)
     return (' '.join(_FormatCompanyHover(company, corporation, max_tier)
-                     for company in sorted(companies))
+                     for company in companies)
             if companies else '&ndash;')
 
 
@@ -243,7 +296,7 @@ def _FormatSynergies(company, corporation=None, max_tier=5):
             inner_parts.append(_FormatCompany(
                     i, corporation is not None and i in corporation.companies))
         if inner_parts:
-            parts.append('<li><span class="%s">%s:</span>'
+            parts.append('<li><div class="%s">%s:</div>'
                          '&nbsp;%s</li>' %
                          (SYNERGY_CLASS[bonus],
                           _FormatDelta(bonus),

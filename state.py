@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""Dumb data classes to track the state of the game.
+"""Factory functions for dumb data classes to track the state of the game.
 
 This module also provides means to pickle and un-pickle said
 classes into and from a human-readable and -editable format.
@@ -9,22 +9,58 @@ classes into and from a human-readable and -editable format.
 
 import collections
 import os
+import types
 
-# Things that are set at game start and never change.
-GameParams = collections.namedtuple(
-    'GameParams',
-    ('name',                  # Name of the game.
-     'players',               # Sequence of player names.
-     'type',                  # One of 'training', 'short', 'full'.
-     'preselected_companies', # Set of company id's that _must_ be in the mix.
-     'open_companies',        # bool
-     'ascending_companies',   # bool (whether companies in the deck are sorted).
-     'share_redemption',      # bool
-     'file_root',             # Directory for game state and HTML files.
-     'css_file',              # As used in HTML. May be relative to file_root.
-     'image_dir',             # As used in HTML. May be relative to file_root.
-     'seed',                  # For random number generator. int or None.
-    ))
+
+def GameParams(**kwargs):
+    """ Things that are set at game start and never change.
+
+    Factory function to create a types.SimpleNamespace object with the
+    attributes described below.
+
+    Attributes:
+      name (string, mandatory): name of the game.
+      players (sequence of strings, mandatory): player names.
+      type (string, mandatory): one of 'training', 'short', 'full'.
+      preselected_companies (set, default set()): company id's that must be in
+        the mix.
+      open_companies (bool, default false): whether company deck is open.
+      ascending_companies (bool, default false): whether companies in deck are
+        sorted (rather than random).
+      share_redemption (bool, default false): whether share redemption is
+        allowed.
+      file_root (string, default "~/public_html/rollingstock/games/<name>"):
+        directory for game state and HTML files.
+      css_file (string, default "../css/rsmod.css"): CSS file to use in HTML.
+        May be relative to file_root.
+      image_dir (string, default "../img": image directory to use in HTML.
+        May be relative to file_root.
+      seed (int, default None): seed for the random number generator.
+    """
+    o = types.SimpleNamespace(**kwargs)
+    assert hasattr(o, 'name')
+    assert hasattr(o, 'players')
+    assert hasattr(o, 'type')
+    assert o.type in ('training', 'short', 'full')
+    if not hasattr(o, 'preselected_companies'):
+        o.preselected_companies = set()
+    if not hasattr(o, 'open_companies'):
+        o.open_companies = False
+    if not hasattr(o, 'ascending_companies'):
+        o.ascending_companies = False
+    if not hasattr(o, 'share_redemption'):
+        o.share_redemption = False
+    if not hasattr(o, 'file_root'):
+        o.file_root = os.path.exanduser(os.path.join(
+                '~', 'public_html', 'rollingstock', 'games', o.name))
+    if not hasattr(o, 'css_file'):
+        o.css_file = '../css/rsmod.css'
+    if not hasattr(o, 'image_dir'):
+        o.image_dir = '../img'
+    if not hasattr(o, 'seed'):
+        o.seed = None
+    return o
+
 
 ForeignInvestor = collections.namedtuple(
     'ForeignInvestor',
@@ -106,6 +142,7 @@ def RestorePhase(filename):
     """
     with open(filename, 'r') as fd:
         code = fd.read()
+    namespace = types.SimpleNamespace
     phase = eval(code)
     return phase
     
