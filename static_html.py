@@ -188,8 +188,42 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                          (phase.corporations[c].shares or '&ndash;'))
         lines += [
             '</tr>',
+            '<tr>',
+            '<td class="no-border" colspan=3></td>',
+            '<td class="solid-border">Share price</td>',
             ]
-   
+        for c in corps_order:
+            lines.append('<td class="solid-border">%s</td>' %
+                         ('$'+str(util.SharePrice(c, phase))
+                          if phase.corporations[c].price > 0
+                          else '&ndash;'))
+        lines += [
+            '</tr>',
+            '<tr>',
+            '<td class="no-border" colspan=3></td>',
+            '<td class="solid-border">Treasury</td>',
+            ]
+        for c in corps_order:
+            corp = phase.corporations[c]
+            lines.append('<td class="solid-border">%s</td>' %
+                         ('$'+str(corp.money)
+                          if corp.price > 0
+                          else '&ndash;'))
+        lines += [
+            '</tr>',
+            '<tr>',
+            '<td class="no-border" colspan=3></td>',
+            '<td class="solid-border">Income</td>',
+            ]
+        for c in corps_order:
+            corp = phase.corporations[c]
+            lines.append('<td class="solid-border">%s</td>' %
+                         (_FormatDelta(util.TotalIncomeCorporation(c, phase))
+                          if corp.price > 0
+                          else '&ndash;'))
+        lines += [
+            '</tr>',
+            ]   
         lines.append('</table>')
         # TODO (link to anchor for corps or tooltips)
         return "\n".join(lines + [''])
