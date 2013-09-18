@@ -148,8 +148,9 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
            ]
         for i in corps_order:
             name = base.CORPORATIONS[i]
-            lines.append('<th><img src="%s-30.png" width="30" alt="%s"></th>'
+            lines.append('<th><img src="%s-%s30.png" width="30" alt="%s"></th>'
                          % (os.path.join(phase.params.image_dir, name.lower()),
+                            'gray-' if phase.corporations[i].price < 1 else '',
                             name))
         lines.append('</tr>')
         for p in player_order:
