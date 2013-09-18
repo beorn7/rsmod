@@ -176,22 +176,32 @@ def _SharePriceRow(phase):
         ]
     # Make a map: share price -> corp name.
     corp_at_price = {
-        (base.PRICES[corp.price], name)
+        base.PRICES[corp.price]: name
         for name, corp in zip(base.CORPORATIONS, phase.corporations)
         if corp.price > 0
         }
     for price in base.PRICES[1:]:
-        lines.append('  <td class="sharepricerow">')
         if price in corp_at_price:
             corp = corp_at_price[price]
             lines.append(
-                '    <img src="%s-20.png" width="20" alt="%s">' %
+                '  <td class="sharepricerow">'
+                '<img src="%s-20.png" width="20" alt="%s"></td>' %
                 (os.path.join(phase.params.image_dir, corp.lower()), corp))
-        lines.append('  </td>')
-    lines += [
-        '</tr>',
-        '</table>',
-        ]
+        else:
+            lines.append('  <td class="sharepricerow"></td>')
+    lines.append('</tr>')
+    for tier, (start, end) in enumerate(base.PRICE_RANGES):
+        if tier > base.MAX_TIER[phase.params.type]:
+            break
+        lines += [
+            '<tr>',
+            '<td colspan="%d" class="solidborder"></td>' % (start-1),
+            '<td colspan="%d" class="%s-cell"></td>' %
+            (end-start+1, COMPANY_CLASS[tier]),
+            '<td colspan="%d" class="solidborder"></td>' % (31-end),
+            '</tr>',
+            ]
+    lines.append('</table>')
     # TODO (link to anchor for corps or tooltips)
     return "\n".join(lines + [''])
 

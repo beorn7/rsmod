@@ -87,15 +87,17 @@ ul {
   line-height: 150%;
 }
 
-td.noborder {
+.noborder {
   border-top: none;
   border-bottom: none;
   border-right: none;
   border-left: none;
 }
 
-.solidborder {
+.solidborder,  .red-cell,  .orange-cell,   .yellow-cell,
+ .green-cell,  .blue-cell,  .purple-cell {
   border: 1px solid gray;
+  border-top: 1px solid gray;
   text-align: right;
 }
 
@@ -135,27 +137,27 @@ td.noborder {
   background-color: #DEDEDE
 }
 
-.red, .red-hover {
+.red, .red-hover, .red-cell {
   background-color: #FF6067;
 }
 
-.orange, .orange-hover {
+.orange, .orange-hover, .orange-cell {
   background-color: #FFBB66;
 }
 
-.yellow, .yellow-hover {
+.yellow, .yellow-hover, .yellow-cell {
   background-color: #FFFF55;
 }
 
-.green, .green-hover {
+.green, .green-hover, .green-cell {
   background-color: #00FF22;
 }
 
-.blue, .blue-hover {
+.blue, .blue-hover, .blue-cell {
   background-color: #7799FF;
 }
 
-.purple, .purple-hover {
+.purple, .purple-hover, .purple-cell {
   background-color: #C505FF;
 }
 

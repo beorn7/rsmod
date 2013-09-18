@@ -25,6 +25,17 @@ TIERS = (
   'purple'
   )
 
+# First and last share price allowed as start price per tier
+# (expressed as index in PRICES).
+PRICE_RANGES = (
+  ( 6, 10),
+  ( 6, 14),
+  ( 6, 17),
+  (11, 20),
+  (15, 23),
+  (18, 23)
+  )
+
 # Corporation names.
 CORPORATIONS = (
   'Android',
