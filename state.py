@@ -7,9 +7,18 @@ This module also provides means to pickle and un-pickle said
 classes into and from a human-readable and -editable format.
 """
 
+import base
+
 import collections
 import os
 import types
+
+
+NUMBER_OF_CORPORATIONS = len(base.CORPORATIONS)
+
+
+def _CondSet(o, attr, value):
+    if not hasattr(o, attr): setattr(o, attr, value)
 
 
 def GameParams(**kwargs):
@@ -42,76 +51,131 @@ def GameParams(**kwargs):
     assert hasattr(o, 'players')
     assert hasattr(o, 'type')
     assert o.type in ('training', 'short', 'full')
-    if not hasattr(o, 'preselected_companies'):
-        o.preselected_companies = set()
-    if not hasattr(o, 'open_companies'):
-        o.open_companies = False
-    if not hasattr(o, 'ascending_companies'):
-        o.ascending_companies = False
-    if not hasattr(o, 'share_redemption'):
-        o.share_redemption = False
-    if not hasattr(o, 'file_root'):
-        o.file_root = os.path.exanduser(os.path.join(
-                '~', 'public_html', 'rollingstock', 'games', o.name))
-    if not hasattr(o, 'css_file'):
-        o.css_file = '../css/rsmod.css'
-    if not hasattr(o, 'image_dir'):
-        o.image_dir = '../img'
-    if not hasattr(o, 'seed'):
-        o.seed = None
+    _CondSet(o, 'preselected_companies', set())
+    _CondSet(o, 'open_companies', False)
+    _CondSet(o, 'ascending_companies', False)
+    _CondSet(o, 'share_redemption', False)
+    _CondSet(o, 'file_root',
+             os.path.expanduser(os.path.join(
+                '~', 'public_html', 'rollingstock', 'games', o.name)))
+    _CondSet(o, 'css_file', '../css/rsmod.css')
+    _CondSet(o, 'image_dir', '../img')
+    _CondSet(o, 'seed', None)
     return o
 
 
-ForeignInvestor = collections.namedtuple(
-    'ForeignInvestor',
-    ('money',     # int
-     'companies', # set of id's
-    ))
+def ForeignInvestor(**kwargs):
+    """The foreign investor.
 
-Player = collections.namedtuple(
-    'Player',
-    ForeignInvestor._fields +
-    ('order',       # Player order, as int, 1-based.
-     'shares',      # list of ints, number of shares for each company.
-     'presidencies' # list of bools, whether president of the respective company.
-     )) 
+    Factory function to create a types.SimpleNamespace object with the
+    attributes described below.
 
-Corporation = collections.namedtuple(
-    'Corporation',
-    ForeignInvestor._fields +
-    ('money_in_flight',       # Money that will be received at end of phase 6.
-     'companies_in_flight',   # Set of id's of companies that will be received
-                              # at the end of phase 6.
-     'done',                  # Bool. Company has had its turn in phase 1 or 9.
-     'price',                 # Share price card (as index in the PRICES tuple).
-     'shares',                # Number of shares issued.
-     ))
+    Attributes:
+      money (int, default 0): Money in treasury.
+      companies (set, default set()): IDs of owned companies.
+    """
+    o = types.SimpleNamespace(**kwargs)
+    _CondSet(o, 'money', 0)
+    _CondSet(o, 'companies', set())
+    return o
 
-# A game is tracked in a series of Phase objects. Each
-# translates into a separate page in the HTML interface.
-Phase = collections.namedtuple(
-    'Phase',
-    ('params',       # A GameParams tuple.
-     'turn',         # int, >0.
-     'phase',        # int, between 1 and 9. Phase 10 from the rules is not
-                     # explicitly represented.
-     'last_turn',    # int, number of the last turn, 0 if not yet known.
-     'available',    # set of id's of companies available for auctions.
-     'unavailable',  # set of id's of companies drawn but not yet available.
-     'closed',       # set of id's of closed companies.
-     'deck',         # list of id's of companies in the deck.
-     'foreign_investor', # A ForeignInvestor tuple.
-     'players',      # A list of Player tuples.
-     'corporations', # A list of Corporation tuples.
-     'actions',      # For now just a list of HTML strings describing the actions
-                     # performed in this phase. (This phase tuple contains the
-                     # state after these actions have been applied.) Later,
-                     # this list will contain action objects that can be
-                     # replayed. The phase tuple will then contain the state at
-                     # the beginning of a phase.
-     'future_actions', # In phases with predictable order, this may be filled
-                     # with HTML hints for the players (so that they see who is up).
-    ))
+
+def Player(**kwargs):
+    """A player.
+
+    Factory function to create a types.SimpleNamespace object with the
+    attributes described below plus all the attributes of the ForeignInvestor.
+
+    Attributes:
+      order (int, mandatory): Position in player order (1-based).
+      shares (list of int, default NUMBER_OF_CORPORATIONS*[0]): Number of
+        shares for each corporation.
+      presidencies (list of bool, default NUMBER_OF_CORPORATIONS*[False]:
+        Whether the player is the president of the respective corporation.
+    """
+    o = ForeignInvestor(**kwargs)
+    assert hasattr(o, 'order')
+    _CondSet(o, 'shares', NUMBER_OF_CORPORATIONS*[0])
+    _CondSet(o, 'presidencies', NUMBER_OF_CORPORATIONS*[False])
+    return o
+
+
+def Corporation(**kwargs):
+    """A corporation.
+
+    Factory function to create a types.SimpleNamespace object with the
+    attributes described below plus all the attributes of the ForeignInvestor.
+
+    Attributes:
+      money_in_flight (int, default 0): Money that will be received at end of
+        phase 6.
+      companies_in_flight (set, default set()): Set of id's of companies that
+        will be received at the end of phase 6.
+      done (bool, default False): Whether corporatios has had its turn in phase
+        1 or 9.
+      price (int, default -1): Share price card held by the corporation (as an
+        index in the PRICES tuple, -1 means no card).
+      shares (int, defailt 0): Number of shares issued.
+    """
+    o = ForeignInvestor(**kwargs)
+    _CondSet(o, 'money_in_flight', 0)
+    _CondSet(o, 'companies_in_flight', set())
+    _CondSet(o, 'done', False)
+    _CondSet(o, 'price', -1)
+    _CondSet(o, 'shares', 0)
+    return o
+
+
+def Phase(**kwargs):
+    """A phase of the game.
+
+    A game is tracked in a series of Phase objects. Each translates into a
+    separate page in the HTML interface.
+
+    Factory function to create a types.SimpleNamespace object with the
+    attributes described below.
+
+    Attributes:
+      params (GameParams, mandatory): Paramater for this game.
+      turn (int, default 1): Game turn.
+      phase (int, default 1): Phase within the turn, {1..9}. Note that phase 10
+        as known from the rules is not explicitly represented in the program.
+      last_turn (int, default 0): Number of the last turn, 0 if not yet known.
+      available (set, default set()): IDs of companies available for auctions.
+      unavailable (set, default set()): IDs of companies drawn but not yet
+        available for auctions.
+      closed (set, default set()): IDs of closed companies.
+      deck (list, default []): IDs of companies in the deck.
+      foreign_investor (ForeignInvestor, mandatory): The foreign investor.
+      players (list of Player, mandatory): The players.
+      corporations (list of Corporation, default
+        NUMBER_OF_CORPORATIONS*[Corporation()]): The corporations.
+      actions (list of str, default []): For now just a list of HTML strings
+        describing the actions performed in this phase. (This phase tuple
+        contains the state after these actions have been applied.) Later,
+        this list will contain action objects that can be replayed. The phase
+        tuple will then contain the state at the beginning of a phase.
+      future_actions (list of str, default []): In phases with predictable
+        order, this may be filled with HTML hints for the players (so that they
+        see who is up).
+    """
+    o = types.SimpleNamespace(**kwargs)
+    assert hasattr(o, 'params')
+    _CondSet(o, 'turn', 1)
+    _CondSet(o, 'phase', 1)
+    _CondSet(o, 'last_turn', 0)
+    _CondSet(o, 'available', set())
+    _CondSet(o, 'unavailable', set())
+    _CondSet(o, 'closed', set())
+    _CondSet(o, 'deck', [])
+    assert hasattr(o, 'foreign_investor')
+    assert hasattr(o, 'players')
+    _CondSet(o, 'corporations', [Corporation()
+                                 for _ in range(NUMBER_OF_CORPORATIONS)])
+    _CondSet(o, 'actions', [])
+    _CondSet(o, 'future_actions', [])
+    return o
+
 
 def SavePhase(phase, overwrite_existing=False):
     """Saves the Phase tuple to a file.

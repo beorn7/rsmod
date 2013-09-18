@@ -29,7 +29,6 @@ class TestState(unittest.TestCase):
                 open_companies=True,
                 share_redemption=True,
                 file_root=self.tempdir,
-                image_dir='../img',
                 seed=42))
         state.SavePhase(phase)
         restored_phase = state.RestorePhase(

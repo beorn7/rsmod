@@ -18,18 +18,9 @@ def MakePhase(params):
   """
   phase = state.Phase(
       params=params,
-      turn=1,
-      phase=1,
-      last_turn=0,
-      available=set(),  # Will be populated below.
-      unavailable=set(),
-      deck=[],  # Will be populated below.
-      closed=set(),
-      foreign_investor=state.ForeignInvestor(money=4, companies=set()),
+      foreign_investor=state.ForeignInvestor(money=4),
       players=[],  # Will be populated below.
-      corporations=[],  # Will be populated below.
-      actions=[],
-      future_actions=[])
+      )
 
   random.seed(params.seed)
   number_of_players = len(params.players)
@@ -71,16 +62,5 @@ def MakePhase(params):
               shares=[0]*number_of_corporations,
               presidencies=[False]*number_of_corporations))
                    
-  # Populate corporations.
-  for _ in range(number_of_corporations):
-      phase.corporations.append(state.Corporation(
-              money=0,
-              companies=set(),
-              money_in_flight=0,
-              companies_in_flight=0,
-              done=False,
-              price=-1,
-              shares=0))
-
   return phase  
 

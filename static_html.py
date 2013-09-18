@@ -178,7 +178,7 @@ def _Deck(phase):
         '<ul>',
         '<li>Available for auctions: %s</li>' %
         _FormatCompanies(phase.available),
-        '<li>Drawn but not available for auction: %s</li>' %
+        '<li>Drawn but not available for auctions: %s</li>' %
         _FormatCompanies(phase.unavailable),
         '<li>In the deck: ',
         ]
