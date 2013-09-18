@@ -62,7 +62,7 @@ def TotalIncomePlayer(i, phase):
     """Calculates total income for a player.
 
     Args:
-      i: 0-based position of the player in the Phase tuple.
+      i: 0-based position of the player in the players list in phase.
       phase: the Phase named-tuple.
     Returns:
       The total income.
@@ -76,7 +76,7 @@ def TotalIncomeCorporation(i, phase):
     """Calculates total income for a corporation.
 
     Args:
-      i: 0-based position of the corporation in the Phase tuple.
+      i: 0-based position of the corporation in the corporations list in phase.
       phase: the Phase named-tuple.
     Returns:
       The total income.
@@ -91,9 +91,76 @@ def TotalIncomeForeignInvestor(phase):
     """Calculates total income for the foreign investor, including the bonus $5.
 
     Args:
-      phase: the Phase named-tuple.
+      phase: the phase object.
     Returns:
       The total income.
     """
     ids = phase.foreign_investor.companies
     return base.BaseIncome(ids) - CostOfOwnership(ids, phase) + 5
+
+
+def SharePrice(i, phase):
+    """Returns the share price of a corporation.
+
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      phase: the phase object.
+    Returns:
+      The share price in $ (not the position in the share price tuple).
+     """
+    return base.PRICES[phase.corporations[i].price]
+
+
+def BookValuePlayer(i, phase):
+    """Calculates book value for a player.
+
+    Args:
+      i: 0-based position of the player in the players list in phase.
+      phase: the phase object.
+    Returns:
+      The book value.
+    """
+    player = phase.players[i]
+    return player.money + sum(player.companies) + sum(
+        shares * SharePrice(i, phase) for i, shares in enumerate(player.shares))
+
+
+def BookValueCorporation(i, phase):
+    """Calculates book value for a corporation.
+
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      phase: the phase object.
+    Returns:
+      The book value.
+    """
+    corp = phase.corporations[i]
+    return corp.money + sum(corp.companies)
+
+
+def MarketCap(i, phase):
+    """Calculates market capitalization for a corporation.
+
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      phase: the phase.
+    Returns:
+      The market capitalization.
+    """
+    return phase.corporations[i].shares * SharePrice(i, phase)
+
+
+def BankShares(i, phase):
+    """Returns number of a corporation's shares owned by the bank.
+
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      phase: the phase.
+    Returns:
+      The number of the corporation's shares owned by the bank.
+    """
+    return phase.corporations[i].shares - sum(
+        p.shares[i] for p in phase.players)
+
+
+

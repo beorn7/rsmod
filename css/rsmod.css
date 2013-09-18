@@ -87,14 +87,21 @@ ul {
   line-height: 150%;
 }
 
-.noborder {
+.no-border {
   border-top: none;
   border-bottom: none;
   border-right: none;
   border-left: none;
 }
 
-.solidborder,  .red-cell,  .orange-cell,   .yellow-cell,
+.top-border {
+  border-top: 1px solid gray;
+  border-bottom: none;
+  border-right: none;
+  border-left: none;
+}
+
+.solid-border,  .red-cell,  .orange-cell,   .yellow-cell,
 .green-cell,  .blue-cell,  .purple-cell {
   border: 1px solid gray;
   border-top: 1px solid gray;
