@@ -12,6 +12,29 @@ import base
 
 # TODO: test these functions!
 
+def PlayerOrder(players):
+    """Returns a list with the indices of the players in player order.
+
+    The order is checked at the time of calling this function. Later changes
+    are ignored.
+    """
+    order = [0] * len(players)
+    for i, player in enumerate(players):
+        order[player.order-1] = i
+    return order
+
+
+def SharePriceOrder(corporations):
+    """Returns an list with the indices of the corporations in share price order.
+
+    The order is checked at the time of calling this function. Later changes
+    are ignored.
+    """
+    return [j for j, _ in
+            sorted(((i, corp.price) for i, corp in enumerate(corporations)),
+                   key=lambda x: x[1], reverse=True)]
+
+
 def TierOnTop(phase):
     """Returns the tier of the card on top of the deck.
 

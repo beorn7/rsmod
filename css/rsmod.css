@@ -80,7 +80,7 @@ th {
   border-right: 1px solid gray;
   border-left: 1px solid gray;
   vertical-align: bottom;
-}  
+}
 
 ul {
   margin: 0.2em;
@@ -95,14 +95,14 @@ ul {
 }
 
 .solidborder,  .red-cell,  .orange-cell,   .yellow-cell,
- .green-cell,  .blue-cell,  .purple-cell {
+.green-cell,  .blue-cell,  .purple-cell {
   border: 1px solid gray;
   border-top: 1px solid gray;
   text-align: right;
 }
 
 .sharepricerow {
-  width: 20px
+  width: 20px;
 }
 
 .num {

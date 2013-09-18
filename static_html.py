@@ -43,6 +43,7 @@ PHASE_NAMES = {
     9: 'pay dividends and adjust share prices',
 }
 
+
 def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     """Writes the game state as HTML.
 
@@ -154,10 +155,29 @@ def _Actions(phase):
 
 
 def _Overview(phase):
+    players = phase.players
+    corps = phase.corporations
+    player_order = util.PlayerOrder(players)
+    corps_order = util.SharePriceOrder(corps)
     lines = [
         '<h3>Overview</h3>',
         '<p>(players in player order, corporations in share price order)</p>',
-        ]
+        '<table>',
+        '<tr>',
+        '<th>name</th>',
+        '<th>cash</th>',
+        '<th>value</th>',
+        '<th>companies</th>',
+       ]
+    for i in corps_order:
+        name = base.CORPORATIONS[i]
+        lines.append('<th><img src="%s-30.png" width="30" alt="%s"></th>',
+                     % (os.path.join(phase.params.image_dir, name.lower()),
+                        name))
+    lines.append('</tr>')
+ 
+
+    lines.append('</table>')
     # TODO (link to anchor for corps or tooltips)
     return "\n".join(lines + [''])
 
@@ -169,7 +189,7 @@ def _SharePriceRow(phase):
         '<tr>',
         ]
     for price in base.PRICES[1:]:
-        lines.append('  <td class="centered-num">%d</td>\n' % price)
+        lines.append('  <td class="centered-num">%d</td>' % price)
     lines += [
         '</tr>',
         '<tr>',
