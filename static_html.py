@@ -158,15 +158,41 @@ def _Overview(phase):
         '<h3>Overview</h3>',
         '<p>(players in player order, corporations in share price order)</p>',
         ]
-    # TODO (link to anchor for corps)
+    # TODO (link to anchor for corps or tooltips)
     return "\n".join(lines + [''])
 
 
 def _SharePriceRow(phase):
     lines = [
         '<h3>Share price row</h3>',
+        '<table>',
+        '<tr>',
         ]
-    # TODO (link to anchor for corps)
+    for price in base.PRICES[1:]:
+        lines.append('  <td class="centered-num">%d</td>\n' % price)
+    lines += [
+        '</tr>',
+        '<tr>',
+        ]
+    # Make a map: share price -> corp name.
+    corp_at_price = {
+        (base.PRICES[corp.price], name)
+        for name, corp in zip(base.CORPORATIONS, phase.corporations)
+        if corp.price > 0
+        }
+    for price in base.PRICES[1:]:
+        lines.append('  <td class="sharepricerow">')
+        if price in corp_at_price:
+            corp = corp_at_price[price]
+            lines.append(
+                '    <img src="%s-20.png" width="20" alt="%s">' %
+                (os.path.join(phase.params.image_dir, corp.lower()), corp))
+        lines.append('  </td>')
+    lines += [
+        '</tr>',
+        '</table>',
+        ]
+    # TODO (link to anchor for corps or tooltips)
     return "\n".join(lines + [''])
 
 
@@ -233,6 +259,7 @@ def _CorporationDetails(phase):
         '<h3>Corporation details (in share price order)</h3>',
         ]
     # TODO (add anchors to jump to corp, only put open corps here)
+    # or use tooltips instead of this
     return "\n".join(lines + [''])
 
 

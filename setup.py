@@ -24,7 +24,6 @@ def MakePhase(params):
 
   random.seed(params.seed)
   number_of_players = len(params.players)
-  number_of_corporations = len(base.CORPORATIONS)
 
   # Create deck.
   for tier in range(len(base.TIERS)):
@@ -59,8 +58,8 @@ def MakePhase(params):
               money=base.GetStartMoney(number_of_players),
               companies=set(),
               order=pos+1,
-              shares=[0]*number_of_corporations,
-              presidencies=[False]*number_of_corporations))
+              shares=[0]*base.N_CORPORATIONS,
+              presidencies=[False]*base.N_CORPORATIONS))
                    
   return phase  
 

@@ -39,6 +39,8 @@ CORPORATIONS = (
   'Wheel'
 )
 
+N_CORPORATIONS = len(CORPORATIONS)
+
 # 'synergies' is a tuple of synergies with lower id's.
 Company = collections.namedtuple('Company',
                                  'tier income synergies abbreviation name')

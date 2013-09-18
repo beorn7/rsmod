@@ -107,6 +107,10 @@ td.noborder {
   text-align: right;
 }
 
+.centered-num {
+  text-align: center;
+}
+
 .red, .orange, .yellow, .green, .blue, .purple,
 .red-hover, .orange-hover, .yellow-hover, .green-hover,
 .blue-hover, .purple-hover, .card {

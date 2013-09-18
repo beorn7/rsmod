@@ -14,9 +14,6 @@ import os
 import types
 
 
-NUMBER_OF_CORPORATIONS = len(base.CORPORATIONS)
-
-
 def _CondSet(o, attr, value):
     if not hasattr(o, attr): setattr(o, attr, value)
 
@@ -88,15 +85,15 @@ def Player(**kwargs):
 
     Attributes:
       order (int, mandatory): Position in player order (1-based).
-      shares (list of int, default NUMBER_OF_CORPORATIONS*[0]): Number of
+      shares (list of int, default base.N_CORPORATIONS*[0]): Number of
         shares for each corporation.
-      presidencies (list of bool, default NUMBER_OF_CORPORATIONS*[False]:
+      presidencies (list of bool, default base.N_CORPORATIONS*[False]:
         Whether the player is the president of the respective corporation.
     """
     o = ForeignInvestor(**kwargs)
     assert hasattr(o, 'order')
-    _CondSet(o, 'shares', NUMBER_OF_CORPORATIONS*[0])
-    _CondSet(o, 'presidencies', NUMBER_OF_CORPORATIONS*[False])
+    _CondSet(o, 'shares', base.N_CORPORATIONS*[0])
+    _CondSet(o, 'presidencies', base.N_CORPORATIONS*[False])
     return o
 
 
@@ -149,7 +146,7 @@ def Phase(**kwargs):
       foreign_investor (ForeignInvestor, mandatory): The foreign investor.
       players (list of Player, mandatory): The players.
       corporations (list of Corporation, default
-        NUMBER_OF_CORPORATIONS*[Corporation()]): The corporations.
+        base.N_CORPORATIONS*[Corporation()]): The corporations.
       actions (list of str, default []): For now just a list of HTML strings
         describing the actions performed in this phase. (This phase tuple
         contains the state after these actions have been applied.) Later,
@@ -171,7 +168,7 @@ def Phase(**kwargs):
     assert hasattr(o, 'foreign_investor')
     assert hasattr(o, 'players')
     _CondSet(o, 'corporations', [Corporation()
-                                 for _ in range(NUMBER_OF_CORPORATIONS)])
+                                 for _ in range(base.N_CORPORATIONS)])
     _CondSet(o, 'actions', [])
     _CondSet(o, 'future_actions', [])
     return o
