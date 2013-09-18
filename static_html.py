@@ -137,8 +137,8 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         corps_order = util.SharePriceOrder(corps)
         lines = [
             '<h3>Overview</h3>',
-            '<p>(players in player order, corporations in share price '
-            'order)</p>',
+            '<p>Players in player order. Corporations in share price order. '
+            'Mouse over corporation symbols and company boxes for details.</p>',
             '<table>',
             '<tr>',
             '<th>name</th>',
@@ -148,9 +148,13 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
            ]
         for i in corps_order:
             name = base.CORPORATIONS[i]
-            lines.append('<th><img src="%s-%s30.png" width="30" alt="%s"></th>'
-                         % (os.path.join(phase.params.image_dir, name.lower()),
-                            'gray-' if phase.corporations[i].price < 1 else '',
+            active = phase.corporations[i].price > 0
+            lines.append('<th%s>%s<img src="%s-%s30.png" width="30" alt="%s">'
+                         '</th>'
+                         % (' class="corp"' if active else '',
+                            _CorporationDetails(i) if active else '',
+                            os.path.join(phase.params.image_dir, name.lower()),
+                            '' if active else 'gray-',
                             name))
         lines.append('</tr>')
         for p in player_order:
@@ -223,8 +227,32 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                           else '&ndash;'))
         lines += [
             '</tr>',
+            '<tr>',
+            '<td class="no-border" colspan=3></td>',
+            '<td class="solid-border">Book value</td>',
+            ]
+        for c in corps_order:
+            corp = phase.corporations[c]
+            lines.append('<td class="solid-border">%s</td>' %
+                         ('$'+str(util.BookValueCorporation(c, phase))
+                          if corp.price > 0
+                          else '&ndash;'))
+        lines += [
+            '</tr>',
+            '<tr>',
+            '<td class="no-border" colspan=3></td>',
+            '<td class="solid-border">Market capitalization</td>',
+            ]
+        for c in corps_order:
+            corp = phase.corporations[c]
+            lines.append('<td class="solid-border">%s</td>' %
+                         ('$'+str(util.MarketCap(c, phase))
+                          if corp.price > 0
+                          else '&ndash;'))
+        lines += [
+            '</tr>',
+            '</table>',
             ]   
-        lines.append('</table>')
         # TODO (link to anchor for corps or tooltips)
         return "\n".join(lines + [''])
     
@@ -323,19 +351,25 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
            _FormatDelta(util.TotalIncomeForeignInvestor(phase)),
            _FormatCompanies(phase.foreign_investor.companies)))
     
-    def _CorporationDetails():
-        corps = phase.corporations
-        if not any(corp.shares for corp in corps):
-            return ""
+    def _CorporationDetails(i):
+        corp = phase.corporations[i]
         lines = [
-            '<h3>Corporation details (in share price order)</h3>',
+            '<div class="tooltip" style="top: 60px">',
+            '%s' % _FormatCompanies(corp.companies, corp),
+            '<ul>',
+            '<li>President: %s</li>',
+            '<li>Share price: $%d (max payout per share: $%d) '
+            '%d shares issued</li>',
+            '<li>Treasure: $%d</li>',
+            '<li>Income: </li>',
+            '</ul>',
+            '</div>',
             ]
-        # TODO (add anchors to jump to corp, only put open corps here)
-        # or use tooltips instead of this
         return "\n".join(lines + [''])
      
     def _Footer():
-        return "</body>\n</html>\n"
+        # Leave space for tooltips.
+        return '<div style="height:100px"></div></body>\n</html>\n'
      
     def _FormatCompanyHover(company, corporation=None):
       return '<div class="%s">%s[%d]<div class="tooltip">%s</div></div>' % (
@@ -396,7 +430,6 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         fd.write(_SharePriceRow())
         fd.write(_Deck())
         fd.write(_ForeignInvestor())
-        fd.write(_CorporationDetails())
         fd.write(_Footer())
     os.chmod(filename, 0o644)
     index_filename = os.path.join(phase.params.file_root, 'index.html')

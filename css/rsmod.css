@@ -40,6 +40,7 @@ h4 {
   clear: both;
   margin: 0;
   padding: 0.2em;
+  white-space: nowrap;
 }
 
 a.nav {
@@ -205,6 +206,9 @@ div.tooltip {
   box-shadow: 6px 6px 12px #222;
   white-space: normal;
   z-index: 100;
+  font-size: small;
+  font-weight: normal;
+  text-align: left;
 }
 
 .tooltip-parent {
@@ -214,8 +218,18 @@ div.tooltip {
 }
 
 .tooltip-parent:hover > div.tooltip,
-div:hover > div.tooltip {
+div:hover > div.tooltip,
+th.corp:hover > div.tooltip {
   display: block;
+}
+
+th.corp {
+  position: relative;
+  cursor: help;
+}
+
+th.corp:hover {
+  background: #DEDEDE;
 }
 
 dl {
