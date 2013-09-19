@@ -135,7 +135,8 @@ def BookValueCorporation(i, phase):
       The book value.
     """
     corp = phase.corporations[i]
-    return corp.money + sum(corp.companies)
+    return (corp.money + corp.money_in_flight +
+            sum(corp.companies) + sum(corp.companies_in_flight)) 
 
 
 def MarketCap(i, phase):

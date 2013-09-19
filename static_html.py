@@ -137,7 +137,8 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         corps_order = util.SharePriceOrder(corps)
         lines = [
             '<h3>Overview</h3>',
-            '<p>Players in player order. Corporations in share price order. '
+            '<p class="small">Players in player order. Corporations in '
+            'share price order. '
             'Mouse over corporation symbols and company boxes for details.</p>',
             '<table>',
             '<tr>',
@@ -205,7 +206,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '</tr>',
             '<tr>',
             '<td class="no-border" colspan=3></td>',
-            '<td class="solid-border">Treasury</td>',
+            '<td class="solid-border">Cash</td>',
             ]
         for c in corps_order:
             corp = phase.corporations[c]
@@ -213,6 +214,20 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                          ('$'+str(corp.money)
                           if corp.price > 0
                           else '&ndash;'))
+        if phase.phase == 6:
+            lines += [
+                '</tr>',
+                '<tr title="From company sales. Becomes available at end of '
+                'phase. Already added to book value.">',
+                '<td class="no-border" colspan=3></td>',
+                '<td class="solid-border">Cash “in flight”</td>',
+                ]
+            for c in corps_order:
+                corp = phase.corporations[c]
+                lines.append('<td class="solid-border">%s</td>' %
+                             ('$'+str(corp.money_in_flight)
+                              if corp.price > 0
+                              else '&ndash;'))
         lines += [
             '</tr>',
             '<tr>',
@@ -354,7 +369,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     def _CorporationDetails(i):
         corp = phase.corporations[i]
         lines = [
-            '<div class="tooltip" style="top: 60px">',
+            '<div class="tooltip-corp">',
             '%s' % _FormatCompanies(corp.companies, corp),
             '<ul>',
             '<li>President: %s</li>',

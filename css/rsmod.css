@@ -6,6 +6,10 @@ p {
   margin:.2em;
 }
 
+p.small {
+  font-size: small;
+}
+
 div.h1 {
   font-size:1.8em;
   font-weight: bold;
@@ -54,38 +58,9 @@ a.nav {
   text-decoration: none;
 }
 
-table {
-  border:1px solid gray;
-  border-radius: 3px;
-  border-spacing:0.1em;
-  border-collapse:collapse;
-  box-shadow: 3px 3px 6px #222;
-  margin: 0.5em;
-  empty-cells: hide;
-}
-
-
-td {
-  padding: 0.25em;
-  border-top: 1px dotted gray;
-  border-bottom: 1px dotted gray;
-  border-right: 1px solid gray;
-  border-left: 1px solid gray;
-  line-height: 150%;
-}
-
-th {
-  padding: 0.25em;
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
-  border-right: 1px solid gray;
-  border-left: 1px solid gray;
-  vertical-align: bottom;
-}
-
 ul {
   margin: 0.2em;
-  line-height: 150%;
+  line-height: 140%;
 }
 
 .no-border {
@@ -193,7 +168,7 @@ div.clear-both {
   clear: both
 }
 
-div.tooltip {
+div.tooltip, div.tooltip-corp {
   display: none;
   position: absolute;
   top: 1.3em;
@@ -211,6 +186,11 @@ div.tooltip {
   text-align: left;
 }
 
+div.tooltip-corp {
+  width: 240px;
+  top: 60px;
+}
+
 .tooltip-parent {
   display: inline;
   position: relative;
@@ -219,8 +199,37 @@ div.tooltip {
 
 .tooltip-parent:hover > div.tooltip,
 div:hover > div.tooltip,
-th.corp:hover > div.tooltip {
+th.corp:hover > div.tooltip-corp {
   display: block;
+}
+
+table {
+  border:1px solid gray;
+  border-radius: 3px;
+  border-spacing:0.1em;
+  border-collapse:collapse;
+  box-shadow: 3px 3px 6px #222;
+  margin: 0.5em;
+  empty-cells: hide;
+}
+
+
+td {
+  padding: 0.25em;
+  border-top: 1px dotted gray;
+  border-bottom: 1px dotted gray;
+  border-right: 1px solid gray;
+  border-left: 1px solid gray;
+  line-height: 150%;
+}
+
+th {
+  padding: 0.25em;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  border-right: 1px solid gray;
+  border-left: 1px solid gray;
+  vertical-align: bottom;
 }
 
 th.corp {
