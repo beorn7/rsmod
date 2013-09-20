@@ -182,7 +182,7 @@ div.tooltip, div.tooltip-corp {
   background-color: #DEDEDE;
   border-radius: 5px;
   border: 1px solid gray;
-  padding:.1em;
+  padding:4px;
   margin: 0;
   box-shadow: 6px 6px 12px #222;
   white-space: normal;
@@ -195,7 +195,6 @@ div.tooltip, div.tooltip-corp {
 div.tooltip-corp {
   width: 240px;
   top: 60px;
-  padding: 5px;
 }
 
 .tooltip-parent {

@@ -82,7 +82,7 @@ def TotalIncomeCorporation(i, phase):
       The total income.
     """
     corp = phase.corporations[i]
-    ids = corp.companies
+    ids = corp.companies | corp.companies_in_flight
     return (base.BaseIncome(ids) - CostOfOwnership(ids, phase)
             + base.SynergyIncome(ids))
 
@@ -164,4 +164,17 @@ def BankShares(i, phase):
         p.shares[i] for p in phase.players)
 
 
+def President(i, players):
+    """Returns the index of the player that is the president of a corporation.
 
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      players: the players list.
+    Returns:
+      The index of the player being president in the players list. -1 if none.
+    """
+    for p, player in enumerate(players):
+        if player.presidencies[i]: return p
+    return -1 
+
+    

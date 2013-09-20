@@ -43,6 +43,14 @@ PHASE_NAMES = {
     9: 'pay dividends and adjust share prices',
 }
 
+MONEY_IN_FLIGHT_EXPLANATION = (
+    'From company sales. Becomes available at end of phase. Already added to '
+    'book value.')
+
+COMPANIES_IN_FLIGHT_EXPLANATION = (
+    'Companies just bought. Become available at end of phase. Already taken '
+    'into account for book value and income.')
+
 
 def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     """Writes the game state as HTML.
@@ -159,7 +167,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                             name))
         lines.append('</tr>')
         for p in player_order:
-            name = phase.params.players[p]
+            name = html.escape(phase.params.players[p])
             player = phase.players[p]
             lines += [
                 '<tr>',
@@ -217,8 +225,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         if phase.phase == 6:
             lines += [
                 '</tr>',
-                '<tr title="From company sales. Becomes available at end of '
-                'phase. Already added to book value.">',
+                '<tr title="%s">' % MONEY_IN_FLIGHT_EXPLANATION,
                 '<td class="no-border" colspan=3></td>',
                 '<td class="solid-border">Cash “in flight”</td>',
                 ]
@@ -366,8 +373,19 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     
     def _CorporationDetails(i):
         corp = phase.corporations[i]
+        cash = '$%s' % corp.money
+        president = util.President(i, phase.players)
+        if corp.money_in_flight:
+            cash += ' <span title="%s">(+$%d)</span>' % (
+                MONEY_IN_FLIGHT_EXPLANATION, corp.money_in_flight)
         lines = [
             '<div class="tooltip-corp">',
+            '<table class="tooltip-corp">',
+            '<tr><th>President</th><th>Cash</th><th>Shares</th></tr>',
+            '<tr><td>%s</td>' % (html.escape(phase.params.players[president])
+                                 if president > -1 else 'NONE'),
+            '<td>%s</td>' % cash,
+            '<td>%d</td></tr></table>' % corp.shares,
             '<table class="tooltip-corp">',
             '<tr><th>Companies</th></tr>',
             '<tr><td>%s</td></tr>' % _FormatCompanies(corp.companies, corp),
@@ -376,22 +394,17 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         if corp.companies_in_flight:
             lines += [
                 '<table class="tooltip-corp">',
-                '<tr><th>Companies “in flight”</th></tr>',
+                '<tr><th title="%s">Companies “in flight”</th></tr>' %
+                COMPANIES_IN_FLIGHT_EXPLANATION,
                 '<tr><td>%s</td></tr>' %
                 _FormatCompanies(corp.companies_in_flight, corp),
                 '</table>',
             ]
         lines += [
-            '<ul>',
-            '<li>President: %s</li>',
-            '<li>Share price: $%d (max payout per share: $%d) '
-            '%d shares issued</li>',
-            '<li>Treasure: $%d</li>',
-            '<li>Income: </li>',
-            '</ul>',
             '</div>',
             ]
-        # TODO finish this.
+        # TODO share price, max payout, income (base+syn+coo), book value
+        # market cap(?), what's needed to jump to where
         return "\n".join(lines + [''])
      
     def _Footer():
