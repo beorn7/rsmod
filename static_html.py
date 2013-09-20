@@ -268,7 +268,6 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '</tr>',
             '</table>',
             ]   
-        # TODO (link to anchor for corps or tooltips)
         return "\n".join(lines + [''])
     
     def _SharePriceRow():
@@ -311,7 +310,6 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                 '</tr>',
                 ]
         lines.append('</table>')
-        # TODO (link to anchor for corps or tooltips)
         return "\n".join(lines + [''])
     
     def _Deck():
@@ -370,7 +368,20 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         corp = phase.corporations[i]
         lines = [
             '<div class="tooltip-corp">',
-            '%s' % _FormatCompanies(corp.companies, corp),
+            '<table class="tooltip-corp">',
+            '<tr><th>Companies</th></tr>',
+            '<tr><td>%s</td></tr>' % _FormatCompanies(corp.companies, corp),
+            '</table>',
+            ]
+        if corp.companies_in_flight:
+            lines += [
+                '<table class="tooltip-corp">',
+                '<tr><th>Companies “in flight”</th></tr>',
+                '<tr><td>%s</td></tr>' %
+                _FormatCompanies(corp.companies_in_flight, corp),
+                '</table>',
+            ]
+        lines += [
             '<ul>',
             '<li>President: %s</li>',
             '<li>Share price: $%d (max payout per share: $%d) '
@@ -380,6 +391,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '</ul>',
             '</div>',
             ]
+        # TODO finish this.
         return "\n".join(lines + [''])
      
     def _Footer():

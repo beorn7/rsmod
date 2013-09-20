@@ -1,3 +1,6 @@
+/* TODOs: */
+/* - check tablets/phones */
+
 body {
   font-family:Helvetica,sans-serif;
 }
@@ -113,7 +116,8 @@ ul {
 
 .red-hover:hover, .orange-hover:hover, .yellow-hover:hover,
 .green-hover:hover, .blue-hover:hover, .purple-hover:hover {
-  box-shadow: 0px 0px 12px 4px #9E9E9E
+  box-shadow: 0px 0px 12px 4px #9E9E9E;
+  transition: 200ms 200ms box-shadow;
 }
 
 .card {
@@ -169,7 +173,9 @@ div.clear-both {
 }
 
 div.tooltip, div.tooltip-corp {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms 200ms, visibility 0s 400ms;
   position: absolute;
   top: 1.3em;
   left: -80px;
@@ -189,6 +195,7 @@ div.tooltip, div.tooltip-corp {
 div.tooltip-corp {
   width: 240px;
   top: 60px;
+  padding: 5px;
 }
 
 .tooltip-parent {
@@ -200,7 +207,9 @@ div.tooltip-corp {
 .tooltip-parent:hover > div.tooltip,
 div:hover > div.tooltip,
 th.corp:hover > div.tooltip-corp {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 200ms 200ms, visibility 0s 200ms;
 }
 
 table {
@@ -235,10 +244,32 @@ th {
 th.corp {
   position: relative;
   cursor: help;
+  transition: 200ms 200ms background;
 }
 
 th.corp:hover {
   background: #DEDEDE;
+}
+
+table.tooltip-corp {
+  background: #FFF;
+  width: 100%;
+  box-shadow: none;
+  text-align: center;
+  margin: 0px;
+  font-size: x-small;
+  margin-bottom: 2px;
+}
+
+table.tooltip-corp th {
+  padding: 1px;
+  font-variant: small-caps;
+  font-weight: normal;
+  letter-spacing: 1pt;
+}
+
+table.tooltip-corp td {
+  line-height: 1.8;
 }
 
 dl {
