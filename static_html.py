@@ -375,6 +375,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         corp = phase.corporations[i]
         cash = '$%s' % corp.money
         president = util.President(i, phase.players)
+        all_companies = corp.companies | corp.companies_in_flight
         if corp.money_in_flight:
             cash += ' <span title="%s">(+$%d)</span>' % (
                 MONEY_IN_FLIGHT_EXPLANATION, corp.money_in_flight)
@@ -386,6 +387,17 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
                                  if president > -1 else 'NONE'),
             '<td>%s</td>' % cash,
             '<td>%d</td></tr></table>' % corp.shares,
+            '<table class="tooltip-corp">',
+            '<tr><th colspan="4">Income</th></tr>',
+            '<tr><th>Base</th><th>Synergy</th><th>Cost</th>'
+            '<th class="emph">Total</th></tr>',
+            '<tr><td>%s</td>' %  _FormatDelta(base.BaseIncome(all_companies)),
+            '<td>%s</td>' % _FormatDelta(base.SynergyIncome(all_companies)),
+            '<td>%s</td>' % _FormatDelta(-base.CostOfOwnership(
+                    all_companies, util.TierOnTop(phase), phase.params.type)),
+            '<td class="emph">%s</td>' %
+            _FormatDelta(util.TotalIncomeCorporation(i, phase)),
+            '</tr></table>',
             '<table class="tooltip-corp">',
             '<tr><th>Companies</th></tr>',
             '<tr><td>%s</td></tr>' % _FormatCompanies(corp.companies, corp),
@@ -403,7 +415,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         lines += [
             '</div>',
             ]
-        # TODO share price, max payout, income (base+syn+coo), book value
+        # TODO share price, max payout, book value
         # market cap(?), what's needed to jump to where
         return "\n".join(lines + [''])
      
