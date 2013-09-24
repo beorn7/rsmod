@@ -51,6 +51,9 @@ COMPANIES_IN_FLIGHT_EXPLANATION = (
     'Companies just bought. Become available at end of phase. Already taken '
     'into account for book value and income.')
 
+DELTA_EXPLANATION = (
+    '+: book value over lower threshold for this share price, '
+    '-: book value below lower threshold for this share price.')
 
 def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     """Writes the game state as HTML.
@@ -98,7 +101,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '<div class="tooltip-parent">',
             '<img src="%s/info.png" alt="info">' %
             html.escape(phase.params.image_dir),
-            '<div class="tooltip"><h4>Game variants used</h4>',
+            '<div class="tooltip"><div class="h4">Game variants used</div>',
             '<dl>',
             '<dt>Type</dt><dd>%s</dd>' % phase.params.type,
             '<dt>Open company deck</dt><dd>%s</dd>' %
@@ -374,6 +377,16 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     def _CorporationDetails(i):
         corp = phase.corporations[i]
         cash = '$%s' % corp.money
+        i_price = corp.price
+        share_price = util.SharePrice(i, phase)
+        n_prices = len(base.PRICES)
+        required_bv_down = (
+            base.PRICES[i_price-1] * corp.shares if i_price > 1 else 0)
+        required_bv_up = (
+            share_price * corp.shares if i_price < n_prices-1 else 0)
+        required_bv_double_up = (
+            base.PRICES[i_price+1] * corp.shares if i_price < n_prices-2 else 0)
+        bv = util.BookValueCorporation(i, phase)
         president = util.President(i, phase.players)
         all_companies = corp.companies | corp.companies_in_flight
         if corp.money_in_flight:
@@ -388,14 +401,59 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '<td>%s</td>' % cash,
             '<td>%d</td></tr></table>' % corp.shares,
             '<table class="tooltip-corp">',
+            '<tr><th>&twoheadleftarrow;</th><th>&ShortLeftArrow;</th>'
+            '<th>Share Price</th><th>&ShortRightArrow;</th>'
+            '<th>&twoheadrightarrow;</th></tr>',
+            '<tr><td class="%s">%s</td>' % (
+                'red-shareprice' if i_price==2 else 'small-shareprice',
+                '$%d' % base.PRICES[i_price-2] if i_price > 1 else '&ndash;'),
+            '<td class="%s">$%d</td>' % (
+                'red-shareprice' if i_price==1 else 'small-shareprice',
+                base.PRICES[i_price-1]),
+            '<td class="shareprice">$%d</td>' % share_price,
+            '<td class="small-shareprice">%s</td>' % (
+                '$%d' % base.PRICES[i_price+1] if i_price < n_prices-1
+                else '&ndash;'),
+            '<td class="small-shareprice">%s</td></tr>' % (
+                '$%d' % base.PRICES[i_price+2] if i_price < n_prices-2
+                else '&ndash;'),
+            '<tr><th colspan="2">(required)</th><th>Book Value</th>'
+            '<th colspan="2">(required)</th></tr>',
+            '<tr><td>&ndash;</td><td>%s</td>' % (
+                '&ge;$%d' % required_bv_down if required_bv_down
+                else '&ndash;'),
+            '<td>$%d</td>' % bv,
+            '<td>%s</td>' % (
+                '&ge;$%d' % required_bv_up if required_bv_up
+                else '&ndash;'),
+            '<td>%s</td></tr>' % (
+                '&ge;$%d' % required_bv_double_up if required_bv_double_up
+                else '&ndash;'),
+            '<tr><th title="%s" colspan="2">(+/-)</th>' % DELTA_EXPLANATION,
+            '<th>Max Payout</th>'
+            '<th title="%s" colspan="2">(+/-)</th></tr>' % DELTA_EXPLANATION,
+            '<tr><td>&ndash;</td><td title="%s">%s</td>' % (
+                DELTA_EXPLANATION,
+                _FormatDelta(bv-required_bv_down) if required_bv_down
+                else '&ndash;'),
+            '<td>$%d per share</td>' % util.MaxPayout(i, phase),
+            '<td title="%s">%s</td>' % (
+                DELTA_EXPLANATION,
+                _FormatDelta(bv-required_bv_up) if required_bv_up
+                else '&ndash;'),
+            '<td title="%s">%s</td></tr></table>' % (
+                DELTA_EXPLANATION,
+                _FormatDelta(bv-required_bv_double_up) if required_bv_double_up
+                else '&ndash;'),
+            '<table class="tooltip-corp">',
             '<tr><th colspan="4">Income</th></tr>',
             '<tr><th>Base</th><th>Synergy</th><th>Cost</th>'
-            '<th class="emph">Total</th></tr>',
+            '<th class="sum">Total</th></tr>',
             '<tr><td>%s</td>' %  _FormatDelta(base.BaseIncome(all_companies)),
             '<td>%s</td>' % _FormatDelta(base.SynergyIncome(all_companies)),
             '<td>%s</td>' % _FormatDelta(-base.CostOfOwnership(
                     all_companies, util.TierOnTop(phase), phase.params.type)),
-            '<td class="emph">%s</td>' %
+            '<td class="sum">%s</td>' %
             _FormatDelta(util.TotalIncomeCorporation(i, phase)),
             '</tr></table>',
             '<table class="tooltip-corp">',
@@ -415,8 +473,6 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
         lines += [
             '</div>',
             ]
-        # TODO share price, max payout, book value
-        # market cap(?), what's needed to jump to where
         return "\n".join(lines + [''])
      
     def _Footer():
@@ -430,7 +486,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
           _FormatCompanyDetail(company, corporation))
     
     def _FormatCompanyDetail(company, corporation=None):
-        return ('<h4>%s</h4>'
+        return ('<div class="h4">%s</div>'
                 '<div class="%s" title="%s">%s[%d] ($%d&ndash;$%d) %s</div>'
                 '<br>%s' % (
                 base.COMPANIES[company].name,

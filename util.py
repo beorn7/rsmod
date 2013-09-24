@@ -111,6 +111,18 @@ def SharePrice(i, phase):
     return base.PRICES[phase.corporations[i].price]
 
 
+def MaxPayout(i, phase):
+    """Returns the maximum payout per share of a corporation.
+
+    Args:
+      i: 0-based position of the corporation in the corporations list in phase.
+      phase: the phase object.
+    Returns:
+      The maximum payout per share of the corporation.
+     """
+    return SharePrice(i, phase)/3
+
+
 def BookValuePlayer(i, phase):
     """Calculates book value for a player.
 

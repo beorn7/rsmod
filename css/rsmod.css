@@ -41,9 +41,10 @@ h3 {
   padding: 0.2em;
 }
 
-h4 {
+div.h4 {
   text-align:center;
   font-size:small;
+  font-weight: bold;
   clear: both;
   margin: 0;
   padding: 0.2em;
@@ -63,7 +64,7 @@ a.nav {
 
 ul {
   margin: 0.2em;
-  line-height: 140%;
+  line-height: 150%;
 }
 
 .no-border {
@@ -247,8 +248,22 @@ th.corp:hover {
   background: #DEDEDE;
 }
 
-td.emph, th.emph {
+td.sum, th.sum {
   border-left: 3px double gray;;
+}
+
+.shareprice {
+  font-size: x-large;
+}
+
+.red-shareprice {
+  color: #F22;
+  font-size: large;
+}
+
+.small-shareprice {
+  color: #999;
+  font-size: large;
 }
 
 table.tooltip-corp {
@@ -270,6 +285,7 @@ table.tooltip-corp th {
 
 table.tooltip-corp td {
   line-height: 1.8;
+  padding: 1px;
 }
 
 dl {
