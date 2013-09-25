@@ -25,7 +25,7 @@ def PlayerOrder(players):
 
 
 def SharePriceOrder(corporations):
-    """Returns an list with the indices of the corporations in share price order.
+    """Returns a list with the indices of the corporations in share price order.
 
     The order is checked at the time of calling this function. Later changes
     are ignored.
