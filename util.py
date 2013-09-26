@@ -10,8 +10,6 @@ They are still pure, i.e. not object-oriented.
 import base
 
 
-# TODO: test these functions!
-
 def PlayerOrder(players):
     """Returns a list with the indices of the players in player order.
 
@@ -107,8 +105,11 @@ def SharePrice(i, phase):
       phase: the phase object.
     Returns:
       The share price in $ (not the position in the share price tuple).
+      Or -1 if the company has price index of -1.
      """
-    return base.PRICES[phase.corporations[i].price]
+    i_price = phase.corporations[i].price
+    if i_price == -1: return -1
+    return base.PRICES[i_price]
 
 
 def MaxPayout(i, phase):
@@ -119,8 +120,9 @@ def MaxPayout(i, phase):
       phase: the phase object.
     Returns:
       The maximum payout per share of the corporation.
+      Or -1 if the company has a price index of -1.
      """
-    return SharePrice(i, phase)/3
+    return SharePrice(i, phase)//3
 
 
 def BookValuePlayer(i, phase):
