@@ -17,7 +17,10 @@ class Game(object):
         # TODO: implement
         
     def Load(filename):
-        """Reconstruct a game from the given file."""
+        """Reconstruct a game from the given file.
+
+        The actions contained in the loaded file are replayed immediately.
+        """
         # TODO: implement
 
     def Save(filename=None):
