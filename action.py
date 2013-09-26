@@ -7,4 +7,5 @@ TODO: Explain how actions work in general.
 """
 
 class Action(object):
+    """Base class for actions."""
     pass
