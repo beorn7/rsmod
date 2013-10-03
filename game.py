@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import action
+import setup
+
 class Game(object):
     """Represents a whole game (in contrast to a single phase).
 
@@ -12,18 +15,28 @@ class Game(object):
     directly.
     """
 
-    def New():
-        """Creates a newly started game from the given parameters."""
-        # TODO: implement
-        
-    def Load(filename):
+    @classmethod
+    def New(cls, params):
+        """Creates a newly started game from the given parameters.
+
+        Args:
+          params: A state.GameParams object.
+        Returns:
+          The game object, ready to start the game.
+        """
+        game = cls()
+        game._phase = setup.MakePhase(params)
+        return game
+    
+    @classmethod
+    def Load(cls, filename):
         """Reconstruct a game from the given file.
 
         The actions contained in the loaded file are replayed immediately.
         """
         # TODO: implement
 
-    def Save(filename=None):
+    def Save(cls, filename=None):
         """Saves the game state to a file.
 
         You only need to call this method explicitly if you want to
@@ -41,7 +54,7 @@ class Game(object):
         """
         # TODO: implement
 
-    def WriteHtml():
+    def WriteHtml(self):
         """Writes static HTML of the current game state.
 
         You only need to call this method explicitly if you want to create
@@ -50,7 +63,7 @@ class Game(object):
         """
         # TODO: implement
 
-    def Next(**kwargs):
+    def Next(self, **kwargs):
         """Executes the next action.
 
         If the execution is successful, the next_action attribute is updated

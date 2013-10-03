@@ -13,6 +13,8 @@ import collections
 import os
 import types
 
+from action import *
+
 
 def _CondSet(o, attr, value):
     if not hasattr(o, attr): setattr(o, attr, value)
@@ -147,14 +149,11 @@ def Phase(**kwargs):
       players (list of Player, mandatory): The players.
       corporations (list of Corporation, default
         base.N_CORPORATIONS*[Corporation()]): The corporations.
-      actions (list of str, default []): For now just a list of HTML strings
-        describing the actions performed in this phase. (This phase tuple
-        contains the state after these actions have been applied.) Later,
-        this list will contain action objects that can be replayed. The phase
-        tuple will then contain the state at the beginning of a phase.
-      future_actions (list of str, default []): In phases with predictable
-        order, this may be filled with HTML hints for the players (so that they
-        see who is up).
+      actions (list of Actions, default []): Action objects that can be
+        replayed. A phase tuple is supposed to be persisted when it contains
+        the state at the beginning of a phase. By replaying these actions, it
+        can be forwarded into any later state during the phase.
+      next_action (Action, default None): The next action to execute.
     """
     o = types.SimpleNamespace(**kwargs)
     assert hasattr(o, 'params')
@@ -170,7 +169,7 @@ def Phase(**kwargs):
     _CondSet(o, 'corporations', [Corporation()
                                  for _ in range(base.N_CORPORATIONS)])
     _CondSet(o, 'actions', [])
-    _CondSet(o, 'future_actions', [])
+    _CondSet(o, 'next_action', None)
     return o
 
 

@@ -5,13 +5,16 @@
 
 import random
 
+import action
 import base
 import state
 
 def MakePhase(params):
   """Creates and returns an initial Phase tuple from a GameParams tuple.
 
-  Returns: The Phase tuple for turn 1, phase 1 of the new game.
+  Returns:
+    The Phase tuple for turn 1, phase 1 of the new game. next_action is set
+    to a PhaseEndAction as nothing will happen in phase 1 of turn 1.
 
   Raises:
     ValueError: If invalid input values are encountered.
@@ -60,6 +63,8 @@ def MakePhase(params):
               order=pos+1,
               shares=[0]*base.N_CORPORATIONS,
               presidencies=[False]*base.N_CORPORATIONS))
+
+  phase.next_action = action.PhaseEndAction()
                    
   return phase  
 
