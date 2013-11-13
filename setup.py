@@ -14,7 +14,7 @@ def MakePhase(params):
 
   Returns:
     The Phase tuple for turn 1, phase 1 of the new game. next_action is set
-    to a PhaseEndAction as nothing will happen in phase 1 of turn 1.
+    to a PhaseBeginAction.
 
   Raises:
     ValueError: If invalid input values are encountered.
@@ -64,7 +64,7 @@ def MakePhase(params):
               shares=[0]*base.N_CORPORATIONS,
               presidencies=[False]*base.N_CORPORATIONS))
 
-  phase.next_action = action.PhaseEndAction()
+  phase.next_action = action.PhaseBeginAction()
                    
   return phase  
 

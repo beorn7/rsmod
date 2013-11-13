@@ -136,7 +136,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
 
     def _Actions():
         lines = ['<div class="clear-both">',]
-        for line in phase.actions + phase.future_actions:
+        for line in phase.actions + [phase.next_action]:
             lines.append('<p>%s</p>' % line)
         lines.append('</div>')
         return "\n".join(lines + [''])

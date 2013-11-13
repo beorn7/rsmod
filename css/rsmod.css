@@ -113,12 +113,13 @@ ul {
 .blue-hover, .purple-hover {
   position: relative;
   cursor: help;
+  transition: 200ms 0s box-shadow;
 }
 
 .red-hover:hover, .orange-hover:hover, .yellow-hover:hover,
 .green-hover:hover, .blue-hover:hover, .purple-hover:hover {
   box-shadow: 0px 0px 12px 4px #9E9E9E;
-  transition: 200ms 200ms box-shadow;
+  transition: 400ms 0s box-shadow;
 }
 
 .card {
@@ -174,9 +175,11 @@ div.clear-both {
 }
 
 div.tooltip, div.tooltip-corp {
-  opacity: 0;
   visibility: hidden;
-  transition: opacity 200ms 200ms, visibility 0s 400ms;
+  /* TODO: Doesn't work as expected:
+  opacity: 0;
+  transition: 200ms 0s opacity, 0s 200ms visibility;*/
+  transition: 0s 200ms visibility;
   position: absolute;
   top: 1.3em;
   left: -80px;
@@ -207,9 +210,11 @@ div.tooltip-corp {
 .tooltip-parent:hover > div.tooltip,
 div:hover > div.tooltip,
 th.corp:hover > div.tooltip-corp {
-  opacity: 1;
   visibility: visible;
-  transition: opacity 200ms 200ms, visibility 0s 200ms;
+  /* TODO: Doesn't work as expected:
+  opacity: 1;
+  transition: 200ms 300ms opacity, 0s 300ms visibility; */
+  transition: 0s 300ms visibility;
 }
 
 table {
@@ -241,7 +246,7 @@ th {
 th.corp {
   position: relative;
   cursor: help;
-  transition: 200ms 200ms background;
+  transition: 400ms 0s background;
 }
 
 th.corp:hover {
@@ -249,7 +254,7 @@ th.corp:hover {
 }
 
 td.sum, th.sum {
-  border-left: 3px double gray;;
+  border-left: 3px double gray;
 }
 
 .shareprice {

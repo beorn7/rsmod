@@ -173,11 +173,12 @@ def Phase(**kwargs):
     return o
 
 
-def SavePhase(phase, overwrite_existing=False):
+def SavePhase(phase, filename=None, overwrite_existing=False):
     """Saves the Phase tuple to a file.
 
-    The file is created in file_root with the pattern t<x>p<y>.py for its name,
-    where x is the turn number and p the phase number.
+    The file is created in file_root with the pattern t<x>p<y>.py for
+    its name, where x is the turn number and p the phase number. If
+    you want another filename, pass it in as 'filename'.
 
     Existing files will only be overwritten if overwrite_existing is set to
     True. (Otherwise, OSError is raised.)
@@ -185,8 +186,9 @@ def SavePhase(phase, overwrite_existing=False):
     Raises:
       OSError: If any file operation fails.
     """
-    filename = os.path.join(phase.params.file_root,
-                            't%dp%d.py' % (phase.turn, phase.phase))
+    if filename is None:
+        filename = os.path.join(phase.params.file_root,
+                                't%dp%d.py' % (phase.turn, phase.phase))
     mode = 'w' if overwrite_existing else 'x'
     with open(filename, mode) as fd:
         fd.write(str(phase))
