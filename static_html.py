@@ -151,7 +151,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
             '<p class="small">Players in player order. Corporations in '
             'share price order. '
             'Mouse over corporation symbols and company boxes for details.</p>',
-            '<table>',
+            '<table class="overview">',
             '<tr>',
             '<th>name</th>',
             '<th>cash</th>',
@@ -283,7 +283,7 @@ def WriteHtml(phase, create_index_link=True, overwrite_existing=False):
     def _SharePriceRow():
         lines = [
             '<h3>Share price row</h3>',
-            '<table>',
+            '<table class="sharepricerow">',
             '<tr>',
             ]
         for price in base.PRICES[1:]:
