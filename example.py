@@ -14,7 +14,7 @@ phase = setup.MakePhase(
                 open_companies=False,
                 ascending_companies=False,
                 share_redemption=True,
-                file_root='/home/rabe/rsmod/tdir'))
+                file_root='./tdir'))
 phase.actions.extend(['<b>a</b> foo', '<b>b</b> bar'])
 #phase.future_actions.extend(['1 bla', '2 blubb'])
 
